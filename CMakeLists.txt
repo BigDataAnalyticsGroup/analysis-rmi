@@ -20,5 +20,15 @@ SET(CMAKE_CXX_FLAGS_RELWITHDEBINFO  "${CMAKE_CXX_FLAGS_RELWITHDEBINFO} -ggdb3")
 # Directories
 include_directories(include)
 
+# Third party
+include_directories(third_party/ALEX/src)
+include_directories(third_party/argparse/include)
+include_directories(third_party/ART/include)
+include_directories(third_party/CHT/include)
+include_directories(third_party/PGM-index/include)
+include_directories(third_party/RadixSpline/include)
+include_directories(third_party/tlx)
+
 # Executables
 add_executable(example example.cpp)
+add_subdirectory(experiments)

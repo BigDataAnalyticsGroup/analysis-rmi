@@ -33,3 +33,5 @@
 
 # Directories
 build/
+data/
+results/
