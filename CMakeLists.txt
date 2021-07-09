@@ -1,6 +1,9 @@
 cmake_minimum_required(VERSION 3.2)
 
-project("rmi" C CXX)
+project("analysis-rmi"
+    LANGUAGES C CXX
+    HOMEPAGE_URL https://github.com/BigDataAnalyticsGroup/analysis-rmi
+)
 
 # Set output directories
 set(EXECUTABLE_OUTPUT_PATH "${PROJECT_BINARY_DIR}/bin")
