@@ -198,9 +198,9 @@ struct Rmi
         auto err_size = layer2_size_ * sizeof(errors_[0]);
 #elif BOUND == GIND
         auto err_size =  sizeof(error_lo_) + sizeof(error_hi_);
-#elif BOUND == G1S_BOUND
+#elif BOUND == GABS
         auto err_size = sizeof(error_);
-#elif BOUND == NON_BOUND
+#elif BOUND == NB
         auto err_size = 0;
 #endif
         return l1_.size_in_bytes() + layer2_size_ * l2_[0].size_in_bytes()
