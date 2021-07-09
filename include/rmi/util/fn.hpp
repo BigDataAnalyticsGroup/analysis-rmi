@@ -8,7 +8,12 @@
  * Bit Functions
  *====================================================================================================================*/
 
-/** Computes the amount of bits needed to represent a given unsigned value. */
+/**
+ * Computes the amount of bits needed to represent a given unsigned value.
+ * @tparam Numeric the type of the value
+ * @param n the value
+ * @return the bit-width of the value
+ */
 template<typename Numeric>
 uint8_t bit_width(Numeric n)
 {
@@ -29,7 +34,13 @@ uint8_t bit_width(Numeric n)
     return sizeof(Numeric) * 8 - lz;
 }
 
-/** Computes the length of the common prefix of two numeric values. */
+/**
+ * Computes the length of the common prefix of two numeric values.
+ * @tparam Numeric the type of the values
+ * @param v1 the first value
+ * @param v2 the second value
+ * @return the length of the common prefix
+ */
 template<typename Numeric>
 uint8_t common_prefix_width(Numeric v1, Numeric v2)
 {

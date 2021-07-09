@@ -12,29 +12,33 @@ bin/example
 
 ## Example
 ```c++
-/* Create 1M random keys. */
+/* Initialize random number generator. */
 using key_type = uint64_t;
-std::vector<key_type> keys_vec(1e7);
-std::generate(keys_vec.begin(), keys_vec.end(), std::rand);
-std::sort(keys_vec.begin(), keys_vec.end());
-auto keys = keys_vec.data();
-auto n_keys = keys_vec.size();
+std::mt19937 gen(42);
+std::uniform_int_distribution<key_type> key_distrib(0, 1UL << 48);
+auto rand = [&gen, &key_distrib] { return key_distrib(gen); };
+
+/* Create 1M random keys. */
+std::size_t n_keys = 1e7;
+std::vector<key_type> keys(n_keys);
+std::generate(keys.begin(), keys.end(), rand);
+std::sort(keys.begin(), keys.end());
 
 /* Build a two-layer RMI. */
-using layer1_type = rmi::LinearSpline<key_type>;
-using layer2_type = rmi::LinearRegression<key_type>;
+using layer1_type = rmi::LinearSpline;
+using layer2_type = rmi::LinearRegression;
 std::size_t layer2_size = 2UL << 16;
-rmi::Rmi<key_type, layer1_type, layer2_type> rmi(keys, n_keys, layer2_size);
+rmi::RmiLAbs<key_type, layer1_type, layer2_type> rmi(keys, layer2_size);
 
 /* Pick a key. */
-std::mt19937 gen(42);
-std::uniform_int_distribution<std::size_t> distrib(0, n_keys);
-key_type key = keys[distrib(gen)];
+std::uniform_int_distribution<std::size_t> uniform_distrib(0, n_keys - 1);
+key_type key = keys[uniform_distrib(gen)];
 
 /* Perform a lookup. */
 auto range = rmi.search(key);
-auto pos = std::distance(keys, std::lower_bound(keys + range.lo, keys + range.hi, key));
-std::cout << "Key " << key << " is located at position " << pos << '.' << std::endl;
+auto pos = std::lower_bound(keys.begin() + range.lo, keys.begin() + range.hi, key);
+std::cout << "Key " << key << " is located at position "
+          << std::distance(keys.begin(), pos) << '.' << std::endl;
 ```
 
 ## Experimental Results
