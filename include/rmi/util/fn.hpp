@@ -1,7 +1,11 @@
 #pragma once
 
+#include <fstream>
+#include <iostream>
 #include <limits>
+#include <sstream>
 #include <type_traits>
+#include <vector>
 
 
 /*======================================================================================================================
@@ -54,3 +58,61 @@ uint8_t common_prefix_width(Numeric v1, Numeric v2)
     return length;
 }
 
+
+/*======================================================================================================================
+ * String Functions
+ *====================================================================================================================*/
+
+/**
+ * Splits @p str at each occurence of @p delimiter.
+ * @param str the string to be split
+ * @param delimiter the delimiter to split the string at
+ * @return vector of substrings
+ */
+std::vector<std::string> split(const std::string &str, char delimiter)
+{
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream token_stream(str);
+    while (std::getline(token_stream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+
+/*======================================================================================================================
+ * Dataset Functions
+ *====================================================================================================================*/
+
+/**
+ * Reads a dataset file @p filename in binary format and writes keys to vector.
+ * @tparam Key the type of the key
+ * @param filename name of the dataset file
+ * @return vector of keys
+ */
+template<typename Key>
+std::vector<Key> load_data(const std::string &filename) {
+    using key_type = Key;
+
+    // Open file.
+    std::ifstream in(filename, std::ios::binary);
+    if (!in.is_open()) {
+        std::cerr << "Could not load " << filename << '.' << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    // Read number of keys.
+    uint64_t n_keys;
+    in.read(reinterpret_cast<char*>(&n_keys), sizeof(uint64_t));
+
+    // Initialize vector.
+    std::vector<key_type> data;
+    data.resize(n_keys);
+
+    // Read keys.
+    in.read(reinterpret_cast<char*>(data.data()), n_keys * sizeof(key_type));
+    in.close();
+
+    return data;
+}
