@@ -34,4 +34,5 @@
 # Directories
 build/
 data/
+doxy/
 results/

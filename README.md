@@ -98,6 +98,13 @@ A script for running all experiments at once will be added in a future commit.
 However, note that depending on your hardware, running all experiments might
 take days.
 
+## Documentation
+Code documentation can be generated using `doxygen` by running the following command.
+```sh
+doxygen Doxyfile
+```
+The code documentation will be placed in `doxy/html/`.
+
 ## Cite
 ```
 @misc{maltry2021critical,
