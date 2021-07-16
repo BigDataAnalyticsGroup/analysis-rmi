@@ -9,7 +9,7 @@
  *====================================================================================================================*/
 
 /**
- * Computes the amount of bits needed to represent a given unsigned value.
+ * Computes the amount of bits needed to represent unsigned value @p n.
  * @tparam Numeric the type of the value
  * @param n the value
  * @return the bit-width of the value
@@ -19,7 +19,7 @@ uint8_t bit_width(Numeric n)
 {
     static_assert(std::is_unsigned<Numeric>::value, "not defined for signed integral types");
 
-    /* Count leading zeros. */
+    // Count leading zeros.
     int lz;
     if constexpr (std::is_same_v<Numeric, unsigned>) {
         lz = __builtin_clz(n);
@@ -35,7 +35,7 @@ uint8_t bit_width(Numeric n)
 }
 
 /**
- * Computes the length of the common prefix of two numeric values.
+ * Computes the length of the common prefix of two numeric values @p v1 and @p v2.
  * @tparam Numeric the type of the values
  * @param v1 the first value
  * @param v2 the second value
