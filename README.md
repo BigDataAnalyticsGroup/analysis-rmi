@@ -1,5 +1,5 @@
 # A Critical Analysis of Recursive Model Indexes
-Code used for the arXiv report.
+Code used for the [arXiv report](https://arxiv.org/abs/2106.16166).
 
 ## Build
 ```sh
@@ -44,6 +44,7 @@ std::cout << "Key " << key << " is located at position "
 ## Experimental Results
 
 We provide the following experiments from our paper.
+* `rmi_errors`: Prediction error of several RMI configurations (Section 5.2).
 * `index_comparison`: Comparison of lookup time and build time for several
   indexes (Section 8).
 * Further experiments will be added in a future commit.
