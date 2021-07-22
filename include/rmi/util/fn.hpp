@@ -82,6 +82,70 @@ std::vector<std::string> split(const std::string &str, char delimiter)
 
 
 /*======================================================================================================================
+ * Arithmetic Functions
+ *====================================================================================================================*/
+
+/**
+ * Computes the arithmetic mean of a vector @p v of numeric values.
+ * @param v vector of numeric values
+ * @return arithmetic mean
+ */
+template<typename Numeric>
+double mean(std::vector<Numeric> &v)
+{
+    double sum = std::accumulate(v.begin(), v.end(), 0.0);
+    return sum / v.size();
+}
+
+/**
+ * Computes the standard deviation of the mean of vector @p of numeric values.
+ * @param v vector of numeric values
+ * @return standard deviation
+ */
+template<typename Numeric>
+double stdev(std::vector<Numeric> &v) {
+    double mean = ::mean<Numeric>(v);
+    double sq_sum = std::inner_product(v.begin(), v.end(), v.begin(), 0.0);
+    return std::sqrt(sq_sum / v.size() - mean * mean);
+}
+
+/**
+ * Computes the median of vector @p v of numeric values.
+ * @param v vector of numeric values
+ * @return median
+ */
+template<typename Numeric>
+Numeric median(std::vector<Numeric> &v)
+{
+    std::size_t n = v.size() / 2;
+    std::nth_element(v.begin(), v.begin()+n, v.end());
+    return v.at(n);
+}
+
+/**
+ * Computes the minimum of a vector @p v of numeric values.
+ * @param v vector of numeric values
+ * @return minimum
+ */
+template<typename Numeric>
+Numeric min(std::vector<Numeric> &v)
+{
+    return *std::min_element(v.begin(), v.end());
+}
+
+/**
+ * Computes the maximum of a vector @p v of numeric values.
+ * @param v vector of numeric values
+ * @return maximum
+ */
+template<typename Numeric>
+Numeric max(std::vector<Numeric> &v)
+{
+    return *std::max_element(v.begin(), v.end());
+}
+
+
+/*======================================================================================================================
  * Dataset Functions
  *====================================================================================================================*/
 
