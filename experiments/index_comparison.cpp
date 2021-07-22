@@ -51,26 +51,26 @@ void benchmark_rmi(const std::vector<key_type> &keys,
                    const std::size_t n_reps,
                    const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     using layer1_type = rmi::LinearSpline;
     using layer2_type = rmi::LinearRegression;
     std::size_t min_layer_size = 8;
     std::size_t max_layer_size = 24;
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (std::size_t k = min_layer_size; k <= max_layer_size; ++k) {
         uint64_t layer2_size = 1UL << k;
 
-        /* Perform n_reps runs. */
+        // Perform n_reps runs.
         for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-            /* Build time. */
+            // Build time.
             auto start = steady_clock::now();
             rmi::RmiLAbs<key_type, layer1_type, layer2_type> rmi(keys, layer2_size);
             auto stop = steady_clock::now();
             auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-            /* Eval time. */
+            // Eval time.
             std::size_t eval_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -82,7 +82,7 @@ void benchmark_rmi(const std::vector<key_type> &keys,
             auto eval_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = eval_accu;
 
-            /* Lookup time. */
+            // Lookup time.
             std::size_t lookup_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -95,22 +95,22 @@ void benchmark_rmi(const std::vector<key_type> &keys,
             auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = lookup_accu;
 
-            /* Report results. */
-                      /* Dataset */
+            // Report results.
+                      // Dataset
             std::cout << dataset_name << ','
                       << keys.size() << ','
-                      /* Index */
+                      // Index
                       << "RMI" << ','
                       << "\"layer2_size=" << layer2_size << "\"" << ','
                       << rmi.size_in_bytes() << ','
-                      /* Experiment */
+                      // Experiment
                       << rep << ','
                       << samples.size() << ','
-                      /* Results */
+                      // Results
                       << build_time << ','
                       << eval_time << ','
                       << lookup_time << ','
-                      /* Checksums */
+                      // Checksums
                       << eval_accu << ','
                       << lookup_accu << std::endl;
         } // reps
@@ -135,31 +135,31 @@ void benchmark_alex(const std::vector<key_type> &keys,
                     const std::size_t n_reps,
                     const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     std::size_t min_sparcity = 0;
     std::size_t max_sparcity = 14;
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (std::size_t k = min_sparcity; k <= max_sparcity; k++) {
         std::size_t sparcity = 1UL << k;
 
-        /* Prepare dataset. */
+        // Prepare dataset.
         std::vector<std::pair<key_type, std::size_t>> dataset;
         dataset.reserve(keys.size() / sparcity);
         for (std::size_t i = 0; i != keys.size(); ++i)
             if (i % sparcity == 0) dataset.emplace_back(keys[i], i);
 
-        /* Perform n_reps runs. */
+        // Perform n_reps runs.
         for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-            /* Build time. */
+            // Build time.
             auto start = steady_clock::now();
             alex::Alex<key_type, std::size_t> alex;
             alex.bulk_load(dataset.data(), dataset.size());
             auto stop = steady_clock::now();
             auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-            /* Eval time. */
+            // Eval time.
             std::size_t eval_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -172,7 +172,7 @@ void benchmark_alex(const std::vector<key_type> &keys,
             auto eval_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = eval_accu;
 
-            /* Lookup time. */
+            // Lookup time.
             std::size_t lookup_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -188,22 +188,22 @@ void benchmark_alex(const std::vector<key_type> &keys,
             auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = lookup_accu;
 
-            /* Report results. */
-                      /* Dataset */
+            // Report results.
+                      // Dataset
             std::cout << dataset_name << ','
                       << keys.size() << ','
-                      /* Index */
+                      // Index
                       << "ALEX" << ','
                       << "\"sparcity=" << sparcity << "\"" << ','
                       << alex.model_size() + alex.data_size() << ','
-                      /* Experiment */
+                      // Experiment
                       << rep << ','
                       << samples.size() << ','
-                      /* Results */
+                      // Results
                       << build_time << ','
                       << eval_time << ','
                       << lookup_time << ','
-                      /* Checksums */
+                      // Checksums
                       << eval_accu << ','
                       << lookup_accu << std::endl;
         } // rep
@@ -324,18 +324,18 @@ void benchmark_rs(const std::vector<key_type> &keys,
                   const std::size_t n_reps,
                   const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     std::vector<std::size_t> radix_bits = { 16, 18, 20, 22, 24 };
     std::vector<std::size_t> max_errors = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (auto num_radix_bits : radix_bits) {
         for (auto max_error : max_errors) {
 
-            /* Perform n_reps runs. */
+            // Perform n_reps runs.
             for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-                /* Build time. */
+                // Build time.
                 auto start = steady_clock::now();
                 rs::Builder<key_type> rsb(keys.front(), keys.back(), num_radix_bits, max_error);
                 for (const key_type &key : keys) rsb.AddKey(key);
@@ -343,7 +343,7 @@ void benchmark_rs(const std::vector<key_type> &keys,
                 auto stop = steady_clock::now();
                 auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-                /* Eval time. */
+                // Eval time.
                 std::size_t eval_accu = 0;
                 start = steady_clock::now();
                 for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -355,7 +355,7 @@ void benchmark_rs(const std::vector<key_type> &keys,
                 auto eval_time = duration_cast<nanoseconds>(stop - start).count();
                 s_glob = eval_accu;
 
-                /* Lookup time. */
+                // Lookup time.
                 std::size_t lookup_accu = 0;
                 start = steady_clock::now();
                 for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -368,22 +368,22 @@ void benchmark_rs(const std::vector<key_type> &keys,
                 auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
                 s_glob = lookup_accu;
 
-                /* Report results. */
-                          /* Dataset */
+                // Report results.
+                          // Dataset
                 std::cout << dataset_name << ','
                           << keys.size() << ','
-                          /* Index */
+                          // Index
                           << "RadixSpline" << ','
                           << "\"max_error=" << max_error << ",num_radix_bits=" << num_radix_bits << "\"" << ','
                           << rs.GetSize() << ','
-                          /* Experiment */
+                          // Experiment
                           << rep << ','
                           << samples.size() << ','
-                          /* Results */
+                          // Results
                           << build_time << ','
                           << eval_time << ','
                           << lookup_time << ','
-                          /* Checksums */
+                          // Checksums
                           << eval_accu << ','
                           << lookup_accu << std::endl;
             } // rep
@@ -409,7 +409,7 @@ void benchmark_cht(const std::vector<key_type> &keys,
                    const std::size_t n_reps,
                    const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     std::vector<std::pair<std::size_t, std::size_t>> configs = {
         {16, 512}, {16, 1024},
         {32, 512},{32, 1024},
@@ -420,15 +420,15 @@ void benchmark_cht(const std::vector<key_type> &keys,
         {1024, 16}, {1024, 32}, {1024, 64}, {1024, 128}, {1024, 256}, {1024, 512}, {1024, 1024},
     };
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (auto config : configs) {
         std::size_t num_bins = config.first;
         std::size_t max_error = config.second;
 
-        /* Perform n_reps runs. */
+        // Perform n_reps runs.
         for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-            /* Build time. */
+            // Build time.
             auto start = steady_clock::now();
             cht::Builder<key_type> chtb(keys.front(), keys.back(), num_bins, max_error);
             for (const key_type &key : keys) chtb.AddKey(key);
@@ -436,7 +436,7 @@ void benchmark_cht(const std::vector<key_type> &keys,
             auto stop = steady_clock::now();
             auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-            /* Eval time. */
+            // Eval time.
             std::size_t eval_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -448,7 +448,7 @@ void benchmark_cht(const std::vector<key_type> &keys,
             auto eval_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = eval_accu;
 
-            /* Lookup time. */
+            // Lookup time.
             std::size_t lookup_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -461,22 +461,22 @@ void benchmark_cht(const std::vector<key_type> &keys,
             auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = lookup_accu;
 
-            /* Report results. */
-                      /* Dataset */
+            // Report results.
+                      // Dataset
             std::cout << dataset_name << ','
                       << keys.size() << ','
-                      /* Index */
+                      // Index
                       << "Compact Hist-Tree" << ','
                       << "\"num_bins=" << num_bins << ",max_error=" << max_error << "\"" << ','
                       << cht.GetSize() << ','
-                      /* Experiment */
+                      // Experiment
                       << rep << ','
                       << samples.size() << ','
-                      /* Results */
+                      // Results
                       << build_time << ','
                       << eval_time << ','
                       << lookup_time << ','
-                      /* Checksums */
+                      // Checksums
                       << eval_accu << ','
                       << lookup_accu << std::endl;
         } // rep
@@ -501,30 +501,30 @@ void benchmark_art(const std::vector<key_type> &keys,
                    const std::size_t n_reps,
                    const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     std::size_t min_sparcity = 0;
     std::size_t max_sparcity = 14;
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (std::size_t k = min_sparcity; k <= max_sparcity; k++) {
         std::size_t sparcity = 1UL << k;
 
-        /* Prepare dataset. */
+        // Prepare dataset.
         std::vector<art::KeyValue<key_type, std::size_t>> dataset;
         dataset.reserve(keys.size() / sparcity);
         for (std::size_t i = 0; i != keys.size(); ++i)
             dataset.push_back({keys[i], i});
 
-        /* Perform n_reps runs. */
+        // Perform n_reps runs.
         for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-            /* Build time. */
+            // Build time.
             auto start = steady_clock::now();
             art::ART art(dataset, sparcity);
             auto stop = steady_clock::now();
             auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-            /* Eval time. */
+            // Eval time.
             std::size_t eval_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -536,7 +536,7 @@ void benchmark_art(const std::vector<key_type> &keys,
             auto eval_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = eval_accu;
 
-            /* Lookup time. */
+            // Lookup time.
             std::size_t lookup_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -549,22 +549,22 @@ void benchmark_art(const std::vector<key_type> &keys,
             auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = lookup_accu;
 
-            /* Report results. */
-                      /* Dataset */
+            // Report results.
+                      // Dataset
             std::cout << dataset_name << ','
                       << keys.size() << ','
-                      /* Index */
+                      // Index
                       << "ART" << ','
                       << "\"sparcity=" << sparcity << "\"" << ','
                       << art.size_in_bytes() << ','
-                      /* Experiment */
+                      // Experiment
                       << rep << ','
                       << samples.size() << ','
-                      /* Results */
+                      // Results
                       << build_time << ','
                       << eval_time << ','
                       << lookup_time << ','
-                      /* Checksums */
+                      // Checksums
                       << eval_accu << ','
                       << lookup_accu << std::endl;
         } // rep
@@ -589,31 +589,31 @@ void benchmark_tlx(const std::vector<key_type> &keys,
                    const std::size_t n_reps,
                    const std::string dataset_name)
 {
-    /* Set hyperparameters. */
+    // Set hyperparameters.
     std::size_t min_sparcity = 0;
     std::size_t max_sparcity = 14;
 
-    /* Benchmark each configuration. */
+    // Benchmark each configuration.
     for (std::size_t k = min_sparcity; k <= max_sparcity; k++) {
         std::size_t sparcity = 1UL << k;
 
-        /* Prepare dataset. */
+        // Prepare dataset.
         std::vector<std::pair<key_type, std::size_t>> dataset;
         dataset.reserve(keys.size() / sparcity);
         for (std::size_t i = 0; i != keys.size(); ++i)
             if (i % sparcity == 0) dataset.emplace_back(keys[i], i);
 
-        /* Perform n_reps runs. */
+        // Perform n_reps runs.
         for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-            /* Build time. */
+            // Build time.
             auto start = steady_clock::now();
             tlx::btree_multimap<key_type, std::size_t> btree;
             btree.bulk_load(dataset.begin(), dataset.end());
             auto stop = steady_clock::now();
             auto build_time = duration_cast<nanoseconds>(stop - start).count();
 
-            /* Eval time. */
+            // Eval time.
             std::size_t eval_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -626,7 +626,7 @@ void benchmark_tlx(const std::vector<key_type> &keys,
             auto eval_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = eval_accu;
 
-            /* Lookup time. */
+            // Lookup time.
             std::size_t lookup_accu = 0;
             start = steady_clock::now();
             for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -642,7 +642,7 @@ void benchmark_tlx(const std::vector<key_type> &keys,
             auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
             s_glob = lookup_accu;
 
-            /* Compute size. */
+            // Compute size.
             auto stats = btree.get_stats();
             auto inner_slots = stats.inner_slots;
             auto n_inner_nodes = stats.inner_nodes;
@@ -654,22 +654,22 @@ void benchmark_tlx(const std::vector<key_type> &keys,
 
             double size_in_bytes = inner_node_size * n_inner_nodes + leaf_size * n_leaves;
 
-            /* Report results. */
-                      /* Dataset */
+            // Report results.
+                      // Dataset
             std::cout << dataset_name << ','
                       << keys.size() << ','
-                      /* Index */
+                      // Index
                       << "B-tree" << ','
                       << "\"sparcity=" << sparcity << "\"" << ','
                       << size_in_bytes << ','
-                      /* Experiment */
+                      // Experiment
                       << rep << ','
                       << samples.size() << ','
-                      /* Results */
+                      // Results
                       << build_time << ','
                       << eval_time << ','
                       << lookup_time << ','
-                      /* Checksums */
+                      // Checksums
                       << eval_accu << ','
                       << lookup_accu << std::endl;
         } // rep
@@ -693,17 +693,17 @@ void benchmark_bin(const std::vector<key_type> &keys,
                    const std::size_t n_reps,
                    const std::string dataset_name)
 {
-    /* Perform n_reps runs. */
+    // Perform n_reps runs.
     for (std::size_t rep = 0; rep != n_reps; ++rep) {
 
-        /* Build time. */
+        // Build time.
         std::size_t build_time = 0;
 
-        /* Eval time. */
+        // Eval time.
         std::size_t eval_accu = 0;
         std::size_t eval_time = 0;
 
-        /* Lookup time. */
+        // Lookup time.
         std::size_t lookup_accu = 0;
         auto start = steady_clock::now();
         for (std::size_t i = 0; i != samples.size(); ++i) {
@@ -715,25 +715,25 @@ void benchmark_bin(const std::vector<key_type> &keys,
         auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
         s_glob = lookup_accu;
 
-        /* Compute size. */
+        // Compute size.
         double size_in_bytes = 0.f;
 
-        /* Report results. */
-                  /* Dataset */
+        // Report results.
+                  // Dataset
         std::cout << dataset_name << ','
                   << keys.size() << ','
-                  /* Index */
+                  // Index
                   << "\"Binary search\"" << ','
                   << "\"\"" << ','
                   << size_in_bytes << ','
-                  /* Experiment */
+                  // Experiment
                   << rep << ','
                   << samples.size() << ','
-                  /* Results */
+                  // Results
                   << build_time << ','
                   << eval_time << ','
                   << lookup_time << ','
-                  /* Checksums */
+                  // Checksums
                   << eval_accu << ','
                   << lookup_accu << std::endl;
     } // rep
@@ -746,10 +746,10 @@ void benchmark_bin(const std::vector<key_type> &keys,
  */
 int main(int argc, char *argv[])
 {
-    /* Initialize argument parser. */
+    // Initialize argument parser.
     argparse::ArgumentParser program(argv[0], "0.1");
 
-    /* Define arguments. */
+    // Define arguments.
     program.add_argument("filename")
         .help("path to binary file containing uin64_t keys");
 
@@ -803,7 +803,7 @@ int main(int argc, char *argv[])
         .default_value(false)
         .implicit_value(true);
 
-    /* Parse arguments. */
+    // Parse arguments.
     try {
         program.parse_args(argc, argv);
     }
@@ -812,16 +812,16 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
 
-    /* Read arguments. */
+    // Read arguments.
     const auto filename = program.get<std::string>("filename");
     const auto dataset_name = split(filename, '/').back();
     const auto n_reps = program.get<std::size_t>("-n");
     const auto n_samples = program.get<std::size_t>("-s");
 
-    /* Load keys. */
+    // Load keys.
     auto keys = load_data<key_type>(filename);
 
-    /* Sample keys. */
+    // Sample keys.
     uint64_t seed = 42;
     std::mt19937 gen(seed);
     std::uniform_int_distribution<> distrib(0, keys.size() - 1);
@@ -830,7 +830,7 @@ int main(int argc, char *argv[])
     for (std::size_t i = 0; i != n_samples; ++i)
         samples.push_back(keys[distrib(gen)]);
 
-    /* Run benchmarks. */
+    // Run benchmarks.
     if (program["--rmi"]  == true) benchmark_rmi(keys, samples, n_reps, dataset_name);
     if (program["--alex"] == true) benchmark_alex(keys, samples, n_reps, dataset_name);
     if (program["--pgm"]  == true) benchmark_pgm(keys, samples, n_reps, dataset_name);
