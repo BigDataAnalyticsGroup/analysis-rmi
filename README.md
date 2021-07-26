@@ -45,6 +45,8 @@ std::cout << "Key " << key << " is located at position "
 
 We provide the following experiments from our paper.
 * `rmi_errors`: Prediction error of several RMI configurations (Section 5.2).
+* `rmi_intervals`: Interval sizes of several RMI configurations with different
+  types of error bounds (Section 5.3).
 * `index_comparison`: Comparison of lookup time and build time for several
   indexes (Section 8).
 * Further experiments will be added in a future commit.
