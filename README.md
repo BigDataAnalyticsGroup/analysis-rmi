@@ -47,6 +47,8 @@ We provide the following experiments from our paper.
 * `rmi_errors`: Prediction error of several RMI configurations (Section 5.2).
 * `rmi_intervals`: Interval sizes of several RMI configurations with different
   types of error bounds (Section 5.3).
+* `rmi_lookup`: Lookup times for a variety of RMI configurations with different
+  types of error bounds and search algorithms (Section 6).
 * `index_comparison`: Comparison of lookup time and build time for several
   indexes (Section 8).
 * Further experiments will be added in a future commit.
@@ -56,10 +58,11 @@ Below, we explain step by step how to reproduce our experimental results.
 ### Preliminaries
 The following tools are required to reproduce our results.
 * C++ compiler supporting C++17.
-* `cmake`: build configuration.
 * `bash>=4`: run shell scripts.
-* `wget`: download the datasets.
+* `cmake`: build configuration.
 * `md5sum`: validate the datasets.
+* `timeout`: abort experiments of slow configurations.
+* `wget`: download the datasets.
 * `zstd`: decompress the datasets.
 
 In the following, we assume that all scripts are run from the root directory of
