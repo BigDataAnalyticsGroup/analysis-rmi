@@ -12,6 +12,8 @@ using key_type = uint64_t;
 /**
  * Computes several metrics on the error interval sizes for a given @p Rmi on dataset @p keys and writes results to
  * `std::cout`.
+ * @tparam Key key type
+ * @tparam Rmi RMI type
  * @param keys on which the RMI is built
  * @param n_models number of models in the second layer of the RMI
  * @param dataset_name name of the dataset
@@ -28,6 +30,7 @@ void experiment(const std::vector<key_type> &keys,
                 const std::string bounds_type)
 {
     using rmi_type = Rmi;
+
     // Build RMI.
     rmi_type rmi(keys, n_models);
 

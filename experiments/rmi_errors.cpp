@@ -9,6 +9,8 @@ using key_type = uint64_t;
 
 /**
  * Computes several error metrics for a given @p Rmi on dataset @p keys and writes results to `std::cout`.
+ * @tparam Key key type
+ * @tparam Rmi RMI type
  * @param keys on which the RMI is built
  * @param n_models number of models in the second layer of the RMI
  * @param dataset_name name of the dataset

@@ -37,6 +37,7 @@ def plot(x, y, xlabel, ylabel, filename):
 
     fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
+
 if __name__ == "__main__":
     path = 'results'
 
