@@ -67,7 +67,7 @@ The following tools are required to reproduce our results.
 
 In the following, we assume that all scripts are run from the root directory of
 this repository. Before running any experiments, please download the datasets
-first as follows.
+as follows.
 ```sh
 scripts/download_data.sh
 ```
@@ -75,7 +75,7 @@ Make sure to also download the submodules of this repository.
 ```sh
 git submodule update --init
 ```
-If you want to plot the results, install the corresponding python requirements.
+If you want to plot the results, install the corresponding Python requirements.
 ```sh
 pip install -r requirements.txt
 ```
@@ -92,19 +92,17 @@ scripts/run_index_comparison.sh
 Results will be written to `results/<experiment>.csv` in csv format with an
 appropriate header.
 
-Afterwards, the results can be plotted by runninhg `scripts/plot_<experiment>.py`, e.g., to plot the results of the experiment `index_comparison` proceed as follows.
+Afterwards, the results can be plotted by running
+`scripts/plot_<experiment>.py`, e.g., to plot the results of the experiment
+`index_comparison` proceed as follows.
 ```sh
 scripts/plot_index_comparison.py
 ```
 
-The plots will be prefixed by the experiment name and place in `results/`.
-
-### Running all Experiments
-A script for running all experiments at once will be added in a future commit.
-However, note that depending on your hardware, running all experiments might
-take days.
+The plots will be prefixed by the experiment name and placed in `results/`.
 
 ## Documentation
+
 Code documentation can be generated using `doxygen` by running the following command.
 ```sh
 doxygen Doxyfile

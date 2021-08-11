@@ -15,17 +15,19 @@ std::size_t s_glob; ///< global size_t variable
 
 
 /**
- * Computes several metrics on the error interval sizes for a given @p Rmi on dataset @p keys and writes results to
- * `std::cout`.
+ * Measures lookup times of @p samples on a given @p Rmi and writes results to `std::cout`.
  * @tparam Key key type
  * @tparam Rmi RMI type
  * @tparam Search search type
  * @param keys on which the RMI is built
  * @param n_models number of models in the second layer of the RMI
+ * @param samples for which the lookup time is measured
+ * @param n_reps number of repetitions
  * @param dataset_name name of the dataset
  * @param layer1 model type of the first layer
  * @param layer2 model type of the second layer
- * @param bounds_type used by the RMI
+ * @param bound_type used by the RMI
+ * @param search used by the RMI for correction prediction errors
  */
 template<typename Key, typename Rmi, typename Search>
 void experiment(const std::vector<key_type> &keys,
@@ -162,8 +164,9 @@ static std::map<Config, exp_fn_ptr, ConfigCompare> exp_map {
 }; ///< Map that assigns a experiment function pointer to RMI configurations.
 #undef ENTRIES
 
+
 /**
- * Triggers mesurement of lookup times for an RMI configuration provided via command line arguments.
+ * Triggers measurement of lookup times for an RMI configuration provided via command line arguments.
  * @param argc arguments counter
  * @param argv arguments vector
  */

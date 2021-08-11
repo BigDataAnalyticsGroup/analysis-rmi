@@ -19,7 +19,7 @@ using key_type = uint64_t;
  * @param dataset_name name of the dataset
  * @param layer1 model type of the first layer
  * @param layer2 model type of the second layer
- * @param bounds_type used by the RMI
+ * @param bound_type used by the RMI
  */
 template<typename Key, typename Rmi>
 void experiment(const std::vector<key_type> &keys,
@@ -27,7 +27,7 @@ void experiment(const std::vector<key_type> &keys,
                 const std::string dataset_name,
                 const std::string layer1,
                 const std::string layer2,
-                const std::string bounds_type)
+                const std::string bound_type)
 {
     using rmi_type = Rmi;
 
@@ -55,7 +55,7 @@ void experiment(const std::vector<key_type> &keys,
               << layer1 << ','
               << layer2 << ','
               << n_models << ','
-              << bounds_type << ','
+              << bound_type << ','
               << rmi.size_in_bytes() << ','
                  // Interval sizes
               << mean(interval_sizes) << ','
