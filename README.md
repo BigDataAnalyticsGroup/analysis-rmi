@@ -3,6 +3,7 @@ Code used for the [arXiv report](https://arxiv.org/abs/2106.16166).
 
 ## Build
 ```sh
+scripts/rmi_ref/prepare_rmi_ref.sh
 mkdir build
 cd build
 cmake -DCMAKE_BUILD_TYPE=Release ..
@@ -62,6 +63,7 @@ The following tools are required to reproduce our results.
 * `bash>=4`: run shell scripts.
 * `cmake`: build configuration.
 * `md5sum`: validate the datasets.
+* `rust`: generate reference RMIs from [learnedsystems/RMI](https://github.com/learnedsystems/RMI).
 * `timeout`: abort experiments of slow configurations.
 * `wget`: download the datasets.
 * `zstd`: decompress the datasets.

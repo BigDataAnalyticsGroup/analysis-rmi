@@ -105,7 +105,8 @@ if __name__ == "__main__":
         'Compact Hist-Tree': 'x',
         'PGM-index': 's',
         'RadixSpline': '+',
-        'RMI': 'o',
+        'RMI-ours': 'o',
+        'RMI-ref': 'o',
     }
 
     # Plot lookup times against index size
