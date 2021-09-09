@@ -22,6 +22,47 @@
 
 #include "tlx/container/btree_multimap.hpp"
 
+#include "rmi_ref/books_200M_uint64_0.h"
+#include "rmi_ref/books_200M_uint64_1.h"
+#include "rmi_ref/books_200M_uint64_2.h"
+#include "rmi_ref/books_200M_uint64_3.h"
+#include "rmi_ref/books_200M_uint64_4.h"
+#include "rmi_ref/books_200M_uint64_5.h"
+#include "rmi_ref/books_200M_uint64_6.h"
+#include "rmi_ref/books_200M_uint64_7.h"
+#include "rmi_ref/books_200M_uint64_8.h"
+#include "rmi_ref/books_200M_uint64_9.h"
+#include "rmi_ref/fb_200M_uint64_0.h"
+#include "rmi_ref/fb_200M_uint64_1.h"
+#include "rmi_ref/fb_200M_uint64_2.h"
+#include "rmi_ref/fb_200M_uint64_3.h"
+#include "rmi_ref/fb_200M_uint64_4.h"
+#include "rmi_ref/fb_200M_uint64_5.h"
+#include "rmi_ref/fb_200M_uint64_6.h"
+#include "rmi_ref/fb_200M_uint64_7.h"
+#include "rmi_ref/fb_200M_uint64_8.h"
+#include "rmi_ref/fb_200M_uint64_9.h"
+#include "rmi_ref/osm_cellids_200M_uint64_0.h"
+#include "rmi_ref/osm_cellids_200M_uint64_1.h"
+#include "rmi_ref/osm_cellids_200M_uint64_2.h"
+#include "rmi_ref/osm_cellids_200M_uint64_3.h"
+#include "rmi_ref/osm_cellids_200M_uint64_4.h"
+#include "rmi_ref/osm_cellids_200M_uint64_5.h"
+#include "rmi_ref/osm_cellids_200M_uint64_6.h"
+#include "rmi_ref/osm_cellids_200M_uint64_7.h"
+#include "rmi_ref/osm_cellids_200M_uint64_8.h"
+#include "rmi_ref/osm_cellids_200M_uint64_9.h"
+#include "rmi_ref/wiki_ts_200M_uint64_0.h"
+#include "rmi_ref/wiki_ts_200M_uint64_1.h"
+#include "rmi_ref/wiki_ts_200M_uint64_2.h"
+#include "rmi_ref/wiki_ts_200M_uint64_3.h"
+#include "rmi_ref/wiki_ts_200M_uint64_4.h"
+#include "rmi_ref/wiki_ts_200M_uint64_5.h"
+#include "rmi_ref/wiki_ts_200M_uint64_6.h"
+#include "rmi_ref/wiki_ts_200M_uint64_7.h"
+#include "rmi_ref/wiki_ts_200M_uint64_8.h"
+#include "rmi_ref/wiki_ts_200M_uint64_9.h"
+
 
 using key_type = uint64_t;
 using namespace std::chrono;
@@ -95,7 +136,7 @@ void benchmark_rmi(const std::vector<key_type> &keys,
             std::cout << dataset_name << ','
                       << keys.size() << ','
                       // Index
-                      << "RMI" << ','
+                      << "RMI-ours" << ','
                       << "\"layer2_size=" << layer2_size << "\"" << ','
                       << rmi.size_in_bytes() << ','
                       // Experiment
@@ -673,6 +714,141 @@ void benchmark_tlx(const std::vector<key_type> &keys,
 
 
 /*======================================================================================================================
+ * Recursive Model Index (Reference Implementation)
+ *====================================================================================================================*/
+
+/**
+ * Loads pre-built recursive model indexes and performs @p n_reps of lookups on @p samples.  Writes results including
+ * build time, evaluation time, and lookup time to `std::cout`.
+ * @param keys on which the index is built
+ * @param samples used for measuring the lookup time
+ * @param n_reps number of repetitions
+ * @param dataset_name name of the dataset
+ */
+void benchmark_ref(const std::vector<key_type> &keys,
+                   const std::vector<key_type> &samples,
+                   const std::size_t n_reps,
+                   const std::string dataset_name)
+{
+#define RMI_DATA_PATH "third_party/RMI/include/rmi_ref/rmi_data"
+#define RUN(NAMESPACE) \
+    /* Load RMI parameters. */ \
+    if (not NAMESPACE::load(RMI_DATA_PATH)) { \
+        std::cout << "Could not load RMI." << std::endl; \
+        exit(EXIT_FAILURE); \
+    } \
+    /* Perform n_reps runs. */ \
+    for (std::size_t rep = 0; rep != n_reps; ++rep) { \
+        \
+        /* Build time. */ \
+        std::size_t build_time = NAMESPACE::BUILD_TIME_NS; \
+        \
+        /* Eval time. */ \
+        std::size_t eval_accu = 0; \
+        std::size_t err = 0; \
+        auto start = steady_clock::now(); \
+        for (std::size_t i = 0; i != samples.size(); ++i) { \
+            auto key = samples.at(i); \
+            auto res = NAMESPACE::lookup(key, &err); \
+            eval_accu += res + err; \
+        } \
+        auto stop = steady_clock::now(); \
+        auto eval_time = duration_cast<nanoseconds>(stop - start).count(); \
+        s_glob = eval_accu; \
+        \
+        /* Lookup time. */ \
+        std::size_t lookup_accu = 0; \
+        start = steady_clock::now(); \
+        for (std::size_t i = 0; i != samples.size(); ++i) { \
+            auto key = samples.at(i); \
+            auto res = NAMESPACE::lookup(key, &err); \
+            auto lo = res < err  ? 0 : res - err; \
+            auto hi = res + err >= keys.size() ? keys.size() : res + err; \
+            auto pos = std::lower_bound(keys.begin() + lo, keys.begin() + hi, key); \
+            lookup_accu += std::distance(keys.begin(), pos); \
+        } \
+        stop = steady_clock::now(); \
+        auto lookup_time = duration_cast<nanoseconds>(stop - start).count(); \
+        s_glob = lookup_accu; \
+        \
+        /* Get size. */ \
+        std::size_t size_in_bytes = NAMESPACE::RMI_SIZE; \
+        \
+        /* Report results. */ \
+                  /* Dataset */ \
+        std::cout << dataset_name << ',' \
+                  << keys.size() << ',' \
+                  /* Index */ \
+                  << "RMI-ref" << ',' \
+                  << #NAMESPACE << ',' \
+                  << size_in_bytes << ',' \
+                  /* Experiment */ \
+                  << rep << ',' \
+                  << samples.size() << ',' \
+                  /* Results */ \
+                  << build_time << ',' \
+                  << eval_time << ',' \
+                  << lookup_time << ',' \
+                  /* Checksums */ \
+                  << eval_accu << ',' \
+                  << lookup_accu << std::endl; \
+    } /* rep */ \
+    NAMESPACE::cleanup(); \
+
+    if (dataset_name == "books_200M_uint64") {
+        RUN(books_200M_uint64_0)
+        RUN(books_200M_uint64_1)
+        RUN(books_200M_uint64_2)
+        RUN(books_200M_uint64_3)
+        RUN(books_200M_uint64_4)
+        RUN(books_200M_uint64_5)
+        RUN(books_200M_uint64_6)
+        RUN(books_200M_uint64_7)
+        RUN(books_200M_uint64_8)
+        RUN(books_200M_uint64_9)
+    } else if (dataset_name == "fb_200M_uint64") {
+        RUN(fb_200M_uint64_0)
+        RUN(fb_200M_uint64_1)
+        RUN(fb_200M_uint64_2)
+        RUN(fb_200M_uint64_3)
+        RUN(fb_200M_uint64_4)
+        RUN(fb_200M_uint64_5)
+        RUN(fb_200M_uint64_6)
+        RUN(fb_200M_uint64_7)
+        RUN(fb_200M_uint64_8)
+        RUN(fb_200M_uint64_9)
+    } else if (dataset_name == "osm_cellids_200M_uint64") {
+        RUN(osm_cellids_200M_uint64_0)
+        RUN(osm_cellids_200M_uint64_1)
+        RUN(osm_cellids_200M_uint64_2)
+        RUN(osm_cellids_200M_uint64_3)
+        RUN(osm_cellids_200M_uint64_4)
+        RUN(osm_cellids_200M_uint64_5)
+        RUN(osm_cellids_200M_uint64_6)
+        RUN(osm_cellids_200M_uint64_7)
+        RUN(osm_cellids_200M_uint64_8)
+        RUN(osm_cellids_200M_uint64_9)
+    } else if (dataset_name == "wiki_ts_200M_uint64") {
+        RUN(wiki_ts_200M_uint64_0)
+        RUN(wiki_ts_200M_uint64_1)
+        RUN(wiki_ts_200M_uint64_2)
+        RUN(wiki_ts_200M_uint64_3)
+        RUN(wiki_ts_200M_uint64_4)
+        RUN(wiki_ts_200M_uint64_5)
+        RUN(wiki_ts_200M_uint64_6)
+        RUN(wiki_ts_200M_uint64_7)
+        RUN(wiki_ts_200M_uint64_8)
+        RUN(wiki_ts_200M_uint64_9)
+    } else {
+        std::cout << "SOSD RMI not pre-trained for given dataset." << std::endl;
+        exit(EXIT_FAILURE);
+    }
+#undef RUN
+#undef RMI_DATA_PATH
+}
+
+
+/*======================================================================================================================
  * Binary search
  *====================================================================================================================*/
 
@@ -793,6 +969,11 @@ int main(int argc, char *argv[])
         .default_value(false)
         .implicit_value(true);
 
+    program.add_argument("--ref")
+        .help("run benchmark on reference implementation of Recursive Model Index")
+        .default_value(false)
+        .implicit_value(true);
+
     program.add_argument("--bin")
         .help("run benchmark on binary search")
         .default_value(false)
@@ -833,6 +1014,7 @@ int main(int argc, char *argv[])
     if (program["--cht"]  == true) benchmark_cht(keys, samples, n_reps, dataset_name);
     if (program["--art"]  == true) benchmark_art(keys, samples, n_reps, dataset_name);
     if (program["--tlx"]  == true) benchmark_tlx(keys, samples, n_reps, dataset_name);
+    if (program["--ref"]  == true) benchmark_ref(keys, samples, n_reps, dataset_name);
     if (program["--bin"]  == true) benchmark_bin(keys, samples, n_reps, dataset_name);
 
     exit(EXIT_SUCCESS);

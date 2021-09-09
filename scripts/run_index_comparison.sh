@@ -17,10 +17,10 @@ PARAMS="--n_reps ${N_REPS} --n_samples ${N_SAMPLES}"
 
 # Set which indexes to run on datasets
 declare -A flags
-flags['books_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --bin"
-flags['fb_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --bin"
-flags['osm_cellids_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --bin"
-flags['wiki_ts_200M_uint64']="--rmi --alex --pgm --rs --tlx --bin" # ART and CHT do not support duplicates
+flags['books_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --ref --bin"
+flags['fb_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --ref --bin"
+flags['osm_cellids_200M_uint64']="--rmi --alex --pgm --rs --cht --art --tlx --ref --bin"
+flags['wiki_ts_200M_uint64']="--rmi --alex --pgm --rs --tlx --ref --bin" # ART and CHT do not support duplicates
 
 run() {
     DATASET=$1

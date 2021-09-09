@@ -27,6 +27,7 @@ include_directories(third_party/ART/include)
 include_directories(third_party/CHT/include)
 include_directories(third_party/PGM-index/include)
 include_directories(third_party/RadixSpline/include)
+include_directories(third_party/RMI/include)
 include_directories(third_party/tlx)
 
 # Executables
