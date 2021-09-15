@@ -840,8 +840,8 @@ void benchmark_ref(const std::vector<key_type> &keys,
         RUN(wiki_ts_200M_uint64_8)
         RUN(wiki_ts_200M_uint64_9)
     } else {
-        std::cout << "SOSD RMI not pre-trained for given dataset." << std::endl;
-        exit(EXIT_FAILURE);
+        std::cerr << "Reference implementation RMI not pre-trained for given dataset. Skipping." << std::endl;
+        return;
     }
 #undef RUN
 #undef RMI_DATA_PATH
