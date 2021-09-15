@@ -53,6 +53,7 @@ void experiment(const std::vector<key_type> &keys,
         std::cout << dataset_name << ','
                   << keys.size() << ','
                   // Index
+                  << "ours" << ','
                   << layer1 << ','
                   << layer2 << ','
                   << n_models << ','
