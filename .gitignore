@@ -31,6 +31,9 @@
 *.out
 *.app
 
+# Reference optimizer remnants
+*.json_results
+
 # Directories
 build/
 data/
