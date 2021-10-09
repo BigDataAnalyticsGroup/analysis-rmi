@@ -45,6 +45,8 @@ std::cout << "Key " << key << " is located at position "
 ## Experimental Results
 
 We provide the following experiments from our paper.
+* `rmi_segmentation`: Statistical properties on the segment sizes resulting
+  from various root models (Section 5.1).
 * `rmi_errors`: Prediction error of several RMI configurations (Section 5.2).
 * `rmi_intervals`: Interval sizes of several RMI configurations with different
   types of error bounds (Section 5.3).
