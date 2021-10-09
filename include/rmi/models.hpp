@@ -305,26 +305,26 @@ class CubicSpline
         d_ += ymin;
 
         // Check if linear spline performs better.
-        LinearSpline ls(first, last, offset, compression_factor);
+        // LinearSpline ls(first, last, offset, compression_factor);
 
-        double ls_error = 0.f;
-        double cs_error = 0.f;
+        // double ls_error = 0.f;
+        // double cs_error = 0.f;
 
-        for (std::size_t i = 0; i != n; ++i) {
-            double y = (offset +i) * compression_factor;
-            auto key = *(first + i);
-            double ls_pred = ls.predict(key);
-            double cs_pred = predict(key);
-            ls_error += std::abs(ls_pred - y);
-            cs_error += std::abs(cs_pred - y);
-        }
+        // for (std::size_t i = 0; i != n; ++i) {
+        //     double y = (offset +i) * compression_factor;
+        //     auto key = *(first + i);
+        //     double ls_pred = ls.predict(key);
+        //     double cs_pred = predict(key);
+        //     ls_error += std::abs(ls_pred - y);
+        //     cs_error += std::abs(cs_pred - y);
+        // }
 
-        if (ls_error < cs_error) {
-            a_ = 0;
-            b_ = 0;
-            c_ = ls.slope();
-            d_ = ls.intercept();
-        }
+        // if (ls_error < cs_error) {
+        //     a_ = 0;
+        //     b_ = 0;
+        //     c_ = ls.slope();
+        //     d_ = ls.intercept();
+        // }
     }
 
     /**
