@@ -50,7 +50,7 @@ echo "dataset,n_keys,layer1,layer2,n_models,bounds,size_in_bytes,rep,build_time,
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT}: layer1 on '${dataset}'..."
-    for ((i=8; i<=24; i += 1));
+    for ((i=6; i<=25; i += 1));
     do
         n_models=$((2**$i))
         for l1 in ${LAYER1};
@@ -64,7 +64,7 @@ done
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT}: layer2 on '${dataset}'..."
-    for ((i=8; i<=24; i += 1));
+    for ((i=6; i<=25; i += 1));
     do
         n_models=$((2**$i))
         for l2 in ${LAYER2};
@@ -79,7 +79,7 @@ done
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT}: bounds on '${dataset}'..."
-    for ((i=8; i<=24; i += 1));
+    for ((i=6; i<=25; i += 1));
     do
         n_models=$((2**$i))
         for bound in ${BOUNDS};

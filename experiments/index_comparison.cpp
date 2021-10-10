@@ -90,8 +90,8 @@ void benchmark_rmi(const std::vector<key_type> &keys,
     // Set hyperparameters.
     using layer1_type = rmi::LinearSpline;
     using layer2_type = rmi::LinearRegression;
-    std::size_t min_layer_size = 8;
-    std::size_t max_layer_size = 24;
+    std::size_t min_layer_size = 6;
+    std::size_t max_layer_size = 25;
 
     // Benchmark each configuration.
     for (std::size_t k = min_layer_size; k <= max_layer_size; ++k) {
