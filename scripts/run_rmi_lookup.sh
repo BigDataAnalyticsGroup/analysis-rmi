@@ -55,7 +55,7 @@ do
     do
         for l2 in ${LAYER2};
         do
-            for ((i=8; i<=24; i += 1));
+            for ((i=6; i<=25; i += 1));
             do
                 n_models=$((2**$i))
                 run ${dataset} ${l1} ${l2} ${n_models} labs binary
@@ -68,7 +68,7 @@ done
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT}: error bounds on '${dataset}'..."
-    for ((i=8; i<=24; i += 1));
+    for ((i=6; i<=25; i += 1));
     do
         n_models=$((2**$i))
         run ${dataset} cubic_spline linear_spline ${n_models} gabs binary
@@ -87,7 +87,7 @@ done
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT}: searches on '${dataset}'..."
-    for ((i=8; i<=24; i += 1));
+    for ((i=6; i<=25; i += 1));
     do
         n_models=$((2**$i))
         run ${dataset} cubic_spline linear_spline ${n_models} none model_biased_linear

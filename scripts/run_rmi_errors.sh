@@ -45,7 +45,7 @@ do
     do
         for l2 in ${LAYER2_MODELS};
         do
-            for ((i=8; i<=24; i += 1));
+            for ((i=6; i<=25; i += 1));
             do
                 n_models=$((2**$i))
                 run ${dataset} ${l1} ${l2} ${n_models}

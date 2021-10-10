@@ -43,7 +43,7 @@ do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."
     for bound in ${BOUNDS};
     do
-        for ((i=8; i<=24; i += 1));
+        for ((i=6; i<=25; i += 1));
         do
             n_models=$((2**$i))
             run ${dataset} "cubic_spline" "linear_spline" ${n_models} ${bound}
