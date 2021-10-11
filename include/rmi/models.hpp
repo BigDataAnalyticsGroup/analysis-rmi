@@ -397,7 +397,7 @@ class Radix
 
     private:
     uint8_t prefix_; ///< The length of the common prefix.
-    uint8_t radix_;  ///< The number of significatn bits.
+    uint8_t radix_;  ///< The number of significant bits.
 
     public:
     /*
