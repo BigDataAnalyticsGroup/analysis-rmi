@@ -425,8 +425,8 @@ class Radix
 
         // Determine radix width.
         std::size_t max = static_cast<std::size_t>(offset + n - 1) * compression_factor;
-        bool is_power_of_two = (max & (max + 1)) == 0; // check if max is 2^n-1
-        radix_ = is_power_of_two ? bit_width<std::size_t>(max) : bit_width<std::size_t>(max) - 1;
+        bool is_mersenne = (max & (max + 1)) == 0; // check if max is 2^n-1
+        radix_ = is_mersenne ? bit_width<std::size_t>(max) : bit_width<std::size_t>(max) - 1;
     }
 
     /**
