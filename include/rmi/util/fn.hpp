@@ -49,14 +49,17 @@ uint8_t bit_width(Numeric n)
 template<typename Numeric>
 uint8_t common_prefix_width(Numeric v1, Numeric v2)
 {
-    uint8_t length = std::numeric_limits<Numeric>::digits;
+    Numeric Xor = v1 ^ v2; // bit-wise xor
 
-    while (v1 != v2) {
-        v1 >>= 1;
-        v2 >>= 1;
-        length -= 1;
+    if constexpr (sizeof(Numeric) <= sizeof(unsigned)) {
+        return __builtin_clz(Xor);
+    } else if constexpr (sizeof(Numeric) <= sizeof(unsigned long)) {
+        return __builtin_clzl(Xor);
+    } else if constexpr (sizeof(Numeric) <= sizeof(unsigned long long)) {
+        return __builtin_clzll(Xor);
+    } else {
+        static_assert(sizeof(Numeric) > sizeof(unsigned long long), "unsupported width of integral type");
     }
-    return length;
 }
 
 
