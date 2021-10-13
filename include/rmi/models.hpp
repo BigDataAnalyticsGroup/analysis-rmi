@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cmath>
+#include <x86intrin.h>
 
 #include "rmi/util/fn.hpp"
 
@@ -396,8 +397,7 @@ class Radix
     using x_type = X;
 
     private:
-    uint8_t prefix_; ///< The length of the common prefix.
-    uint8_t radix_;  ///< The number of significant bits.
+    x_type mask_; ///< The mask for parallel bits extract.
 
     public:
     /*
@@ -416,17 +416,24 @@ class Radix
         std::size_t n = std::distance(first, last);
 
         if (n == 0) {
-            prefix_ = 0;
-            radix_ = 0;
+            mask_ = 0;
             return;
         }
 
-        prefix_ = common_prefix_width(*first, *(last - 1)); // compute common prefix length
+        auto prefix = common_prefix_width(*first, *(last - 1)); // compute common prefix length
+
+        if (prefix == (sizeof(x_type) * 8)) {
+            mask_ = 42; // TODO: What should the mask be in this case?
+            return;
+        }
 
         // Determine radix width.
         std::size_t max = static_cast<std::size_t>(offset + n - 1) * compression_factor;
         bool is_mersenne = (max & (max + 1)) == 0; // check if max is 2^n-1
-        radix_ = is_mersenne ? bit_width<std::size_t>(max) : bit_width<std::size_t>(max) - 1;
+        auto radix = is_mersenne ? bit_width<std::size_t>(max) : bit_width<std::size_t>(max) - 1;
+
+        // Mask all bits but the radix
+        mask_ = (~(x_type)0 >> prefix) & (~(x_type)0 << ((sizeof(x_type) * 8) - radix - prefix)); //0xffff << prefix_
     }
 
     /**
@@ -434,25 +441,28 @@ class Radix
      * @param x to estimate a y-value for
      * @return the estimated y-value for @p x
      */
-    double predict(const x_type x) const { return (x << prefix_) >> ((sizeof(x_type) * 8) - radix_); }
+    // double predict(const x_type x) const { return (x << prefix_) >> ((sizeof(x_type) * 8) - radix_); }
+    double predict(const x_type x) const {
+        if constexpr(sizeof(x_type) <= sizeof(unsigned)) {
+            return _pext_u32(x, mask_);
+        } else if constexpr(sizeof(x_type) <= sizeof(unsigned long long)) {
+            return _pext_u64(x, mask_);
+        } else {
+            static_assert(sizeof(x_type) > sizeof(unsigned long long), "unsupported width of integral type");
+        }
+    }
 
     /**
-     * Returns the common prefix length.
-     * @return the common prefix length
+     * Returns the mask used for parallel bits extraction.
+     * @return the mask
      */
-    uint8_t prefix() const { return prefix_; }
-
-    /**
-     * Returns the number of significant bits.
-     * @return the number of significant bits
-     */
-    uint8_t radix() const { return radix_; }
+    uint8_t mask() const { return mask_; }
 
     /**
      * Returns the size of the radix model in bytes.
      * @return radix model size in bytes.
      */
-    std::size_t size_in_bytes() { return 2 * sizeof(uint8_t); }
+    std::size_t size_in_bytes() { return sizeof(mask_); }
 
     /**
      * Writes a human readable representation of the radix model to an output stream.
@@ -461,7 +471,7 @@ class Radix
      * @returns the output stream
      */
     friend std::ostream & operator<<(std::ostream &out, const Radix &m) {
-        return out << "(x << " << unsigned(m.prefix()) << ") >> " << ((sizeof(x_type) * 8) - unsigned(m.radix()));
+        return out << "_pext(x, " << m.mask() << ")";
     }
 };
 
