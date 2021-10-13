@@ -33,9 +33,10 @@ class Rmi
     using layer2_type = Layer2;
 
     protected:
-    std::size_t n_keys_;          ///< The number of keys the index was built on.
-    layer1_type l1_;              ///< The layer1 model.
-    std::vector<layer2_type> l2_; ///< The vector of layer2 models.
+    std::size_t n_keys_;      ///< The number of keys the index was built on.
+    std::size_t layer2_size_; ///< The number of models in layer2.
+    layer1_type l1_;          ///< The layer1 model.
+    layer2_type *l2_;         ///< The array of layer2 models.
 
     public:
     /**
@@ -59,12 +60,13 @@ class Rmi
     template<typename RandomIt>
     Rmi(RandomIt first, RandomIt last, const std::size_t layer2_size)
         : n_keys_(std::distance(first, last))
+        , layer2_size_(layer2_size)
     {
         // Train layer1.
         l1_ = layer1_type(first, last, 0, static_cast<double>(layer2_size) / n_keys_); // train with compression
 
         // Train layer2.
-        l2_ = std::vector<layer2_type>(layer2_size);
+        l2_ = new layer2_type[layer2_size];
         std::size_t segment_start = 0;
         std::size_t segment_id = 0;
         // Assign each key to its segment.
@@ -73,20 +75,25 @@ class Rmi
             std::size_t pred_segment_id = get_segment_id(*pos);
             // If a key is assigned to a new segment, all models must be trained up to the new segment.
             if (pred_segment_id > segment_id) {
-                l2_[segment_id] = layer2_type(first + segment_start, pos, segment_start);
+                new (&l2_[segment_id]) layer2_type(first + segment_start, pos, segment_start);
                 for (std::size_t j = segment_id + 1; j < pred_segment_id; ++j) {
-                    l2_[j] = layer2_type(pos - 1, pos, i - 1); // train other models on last key in previous segment
+                    new (&l2_[j]) layer2_type(pos - 1, pos, i - 1); // train other models on last key in previous segment
                 }
                 segment_id = pred_segment_id;
                 segment_start = i;
             }
         }
         // Train remaining models.
-        l2_[segment_id] = layer2_type(first + segment_start, last, segment_start);
+        new (&l2_[segment_id]) layer2_type(first + segment_start, last, segment_start);
         for (std::size_t j = segment_id + 1; j < layer2_size; ++j) {
-            l2_[j] = layer2_type(last - 1, last, n_keys_ - 1); // train remaining models on last key
+            new (&l2_[j]) layer2_type(last - 1, last, n_keys_ - 1); // train remaining models on last key
         }
     }
+
+    /**
+     * Destructor.
+     */
+    ~Rmi() { delete[] l2_; }
 
     /**
      * Returns the id of the segment @p key belongs to.
@@ -94,7 +101,7 @@ class Rmi
      * @return segment id of the given key
      */
     std::size_t get_segment_id(const key_type key) const {
-        return std::clamp<double>(l1_.predict(key), 0, l2_.size() - 1);
+        return std::clamp<double>(l1_.predict(key), 0, layer2_size_ - 1);
     }
 
     /**
@@ -115,11 +122,17 @@ class Rmi
     std::size_t n_keys() const { return n_keys_; }
 
     /**
+     * Returns the number of models in layer2.
+     * @return the number of models in layer2
+     */
+    std::size_t layer2_size() const { return layer2_size_; }
+
+    /**
      * Returns the size of the index in bytes.
      * @return index size in bytes
      */
     std::size_t size_in_bytes() {
-        return l1_.size_in_bytes() + l2_.size() * l2_[0].size_in_bytes() + sizeof(n_keys_);
+        return l1_.size_in_bytes() + layer2_size_ * l2_[0].size_in_bytes() + sizeof(n_keys_) + sizeof(layer2_size_);
     }
 };
 
