@@ -41,13 +41,13 @@ echo "dataset,layer1,layer2,n_models,mean_ae,median_ae,stdev_ae,min_ae,max_ae" >
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."
-    for l1 in ${LAYER1_MODELS};
+    for ((i=6; i<=25; i += 1));
     do
-        for l2 in ${LAYER2_MODELS};
+        n_models=$((2**$i))
+        for l1 in ${LAYER1_MODELS};
         do
-            for ((i=6; i<=25; i += 1));
+            for l2 in ${LAYER2_MODELS};
             do
-                n_models=$((2**$i))
                 run ${dataset} ${l1} ${l2} ${n_models}
             done
         done
