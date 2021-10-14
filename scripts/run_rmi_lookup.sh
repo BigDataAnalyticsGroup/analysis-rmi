@@ -14,7 +14,7 @@ BIN="build/bin/rmi_lookup"
 N_REPS="3"
 N_SAMPLES="20000000"
 PARAMS="--n_reps ${N_REPS} --n_samples ${N_SAMPLES}"
-TIMEOUT=$((${N_REPS}*3000))
+TIMEOUT="90s"
 
 DATASETS="books_200M_uint64 fb_200M_uint64 osm_cellids_200M_uint64 wiki_ts_200M_uint64"
 LAYER1="cubic_spline linear_spline linear_regression radix"
@@ -50,7 +50,7 @@ echo "dataset,n_keys,layer1,layer2,n_models,bounds,search,size_in_bytes,rep,n_sa
 # Run model type experiment
 for dataset in ${DATASETS};
 do
-    echo "Performing ${EXPERIMENT}: model types on '${dataset}'..."
+    echo "Performing ${EXPERIMENT} on '${dataset}'..."
     for l1 in ${LAYER1};
     do
         for l2 in ${LAYER2};
@@ -58,46 +58,19 @@ do
             for ((i=6; i<=25; i += 1));
             do
                 n_models=$((2**$i))
+                run ${dataset} ${l1} ${l2} ${n_models} none model_biased_linear
+                run ${dataset} ${l1} ${l2} ${n_models} none model_biased_exponential
+
+                run ${dataset} ${l1} ${l2} ${n_models} gabs binary
+
+                run ${dataset} ${l1} ${l2} ${n_models} gind model_biased_binary
+                run ${dataset} ${l1} ${l2} ${n_models} gind binary
+
                 run ${dataset} ${l1} ${l2} ${n_models} labs binary
+
+                run ${dataset} ${l1} ${l2} ${n_models} lind model_biased_binary
+                run ${dataset} ${l1} ${l2} ${n_models} lind binary
             done
         done
-    done
-done
-
-# Run error bounds experiment
-for dataset in ${DATASETS};
-do
-    echo "Performing ${EXPERIMENT}: error bounds on '${dataset}'..."
-    for ((i=6; i<=25; i += 1));
-    do
-        n_models=$((2**$i))
-        run ${dataset} cubic_spline linear_spline ${n_models} gabs binary
-        run ${dataset} cubic_spline linear_spline ${n_models} gind binary
-        run ${dataset} cubic_spline linear_spline ${n_models} labs binary
-        run ${dataset} cubic_spline linear_spline ${n_models} lind binary
-
-        run ${dataset} linear_spline linear_regression ${n_models} gabs binary
-        run ${dataset} linear_spline linear_regression ${n_models} gind binary
-        run ${dataset} linear_spline linear_regression ${n_models} labs binary
-        run ${dataset} linear_spline linear_regression ${n_models} lind binary
-    done
-done
-
-# Run searches experiment
-for dataset in ${DATASETS};
-do
-    echo "Performing ${EXPERIMENT}: searches on '${dataset}'..."
-    for ((i=6; i<=25; i += 1));
-    do
-        n_models=$((2**$i))
-        run ${dataset} cubic_spline linear_spline ${n_models} none model_biased_linear
-        run ${dataset} cubic_spline linear_spline ${n_models} none model_biased_exponential
-        run ${dataset} cubic_spline linear_spline ${n_models} lind model_biased_binary
-        run ${dataset} cubic_spline linear_spline ${n_models} lind binary
-
-        run ${dataset} linear_spline linear_regression ${n_models} none model_biased_linear
-        run ${dataset} linear_spline linear_regression ${n_models} none model_biased_exponential
-        run ${dataset} linear_spline linear_regression ${n_models} lind model_biased_binary
-        run ${dataset} linear_spline linear_regression ${n_models} lind binary
     done
 done
