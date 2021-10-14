@@ -34,6 +34,8 @@ then
 fi
 
 DATASETS="books_200M_uint64 fb_200M_uint64 osm_cellids_200M_uint64 wiki_ts_200M_uint64"
+LAYERS1="linear_spline cubic_spline linear_regression radix"
+LAYERS2="linear_spline linear_regression"
 BOUNDS="gabs gind labs lind"
 
 # Run experiments
@@ -41,13 +43,18 @@ echo "dataset,layer1,layer2,n_models,bounds,size_in_bytes,mean_interval,median_i
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."
-    for bound in ${BOUNDS};
+    for ((i=6; i<=25; i += 1));
     do
-        for ((i=6; i<=25; i += 1));
+        n_models=$((2**$i))
+        for l1 in ${LAYERS1};
         do
-            n_models=$((2**$i))
-            run ${dataset} "cubic_spline" "linear_spline" ${n_models} ${bound}
-            run ${dataset} "linear_spline" "linear_regression" ${n_models} ${bound}
+            for l2 in ${LAYERS2};
+            do
+                for bound in ${BOUNDS};
+                do
+                    run ${dataset} ${l1} ${l2} ${n_models} ${bound}
+                done
+            done
         done
     done
 done
