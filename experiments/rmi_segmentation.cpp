@@ -71,7 +71,7 @@ static std::map<std::string, exp_fn_ptr> exp_map {
     ENTRY(linear_spline,     rmi::LinearSpline),
     ENTRY(cubic_spline,      rmi::CubicSpline),
     ENTRY(radix,             rmi::Radix<key_type>),
-}; ///< Map that assigns a experiment function pointer to model types.
+}; ///< Map that assigns an experiment function pointer to model types.
 #undef ENTRY
 
 

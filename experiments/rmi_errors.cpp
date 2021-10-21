@@ -87,7 +87,7 @@ static std::map<std::pair<std::string, std::string>, exp_fn_ptr> exp_map {
     ENTRY(cubic_spline,      linear_spline,     rmi::CubicSpline,      rmi::LinearSpline),
     ENTRY(radix,             linear_regression, rmi::Radix<key_type>,  rmi::LinearRegression),
     ENTRY(radix,             linear_spline,     rmi::Radix<key_type>,  rmi::LinearSpline),
-}; ///< Map that assigns a experiment function pointer to RMI configurations.
+}; ///< Map that assigns an experiment function pointer to RMI configurations.
 #undef ENTRY
 
 

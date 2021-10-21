@@ -117,7 +117,7 @@ static std::map<Config, exp_fn_ptr, ConfigCompare> exp_map {
     ENTRIES(cubic_spline,      linear_spline,     rmi::CubicSpline,      rmi::LinearSpline)
     ENTRIES(radix,             linear_regression, rmi::Radix<key_type>,  rmi::LinearRegression)
     ENTRIES(radix,             linear_spline,     rmi::Radix<key_type>,  rmi::LinearSpline)
-}; ///< Map that assigns a experiment function pointer to RMI configurations.
+}; ///< Map that assigns an experiment function pointer to RMI configurations.
 #undef ENTRIES
 
 
