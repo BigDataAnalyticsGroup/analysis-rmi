@@ -54,8 +54,10 @@ We provide the following experiments from our paper.
   types of error bounds and search algorithms (Section 6).
 * `rmi_build`: Build times for a variety of RMI configurations with different
   types of error bounds (Section 7).
+* `rmi_guideline`: Comparison of fastest lookup times vs lookup times achieved
+  by our guideline. (Section 8)
 * `index_comparison`: Comparison of lookup time and build time for several
-  indexes (Section 8).
+  indexes (Section 9).
 
 Below, we explain step by step how to reproduce our experimental results.
 

@@ -5,6 +5,7 @@ add_executable(rmi_errors rmi_errors.cpp)
 add_executable(rmi_intervals rmi_intervals.cpp)
 add_executable(rmi_lookup rmi_lookup.cpp)
 add_executable(rmi_build rmi_build.cpp)
+add_executable(rmi_guideline rmi_guideline.cpp)
 
 set(SOSD_PATH "${PROJECT_SOURCE_DIR}/third_party/RMI/include/rmi_ref")
 add_executable(index_comparison
