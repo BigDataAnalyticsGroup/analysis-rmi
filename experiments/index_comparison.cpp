@@ -6,6 +6,7 @@
 #include "rmi/models.hpp"
 #include "rmi/rmi.hpp"
 #include "rmi/util/fn.hpp"
+#include "rmi/util/search.hpp"
 
 #include "core/alex.h"
 #include "core/alex_base.h"
@@ -90,67 +91,102 @@ void benchmark_rmi(const std::vector<key_type> &keys,
     // Set hyperparameters.
     using layer1_type = rmi::LinearSpline;
     using layer2_type = rmi::LinearRegression;
-    std::size_t min_layer_size = 6;
-    std::size_t max_layer_size = 25;
 
     // Benchmark each configuration.
-    for (std::size_t k = min_layer_size; k <= max_layer_size; ++k) {
-        uint64_t layer2_size = 1UL << k;
+    for (std::size_t k = 1; k <= 20; ++k) {
+        std::size_t budget = (1UL << k) * 1024;
 
-        // Perform n_reps runs.
-        for (std::size_t rep = 0; rep != n_reps; ++rep) {
+        // Dermine maximum number of layer 2 models for LS->LR NB+MExp.
+        auto n_models = (budget - 2 * sizeof(double) - 2 * sizeof(std::size_t)) / (2 * sizeof(double));
 
-            // Build time.
-            auto start = steady_clock::now();
-            rmi::RmiLAbs<key_type, layer1_type, layer2_type> rmi(keys, layer2_size);
-            auto stop = steady_clock::now();
-            auto build_time = duration_cast<nanoseconds>(stop - start).count();
+        // Build RMI.
+        rmi::Rmi<key_type, layer1_type, layer2_type> test_rmi(keys, n_models);
 
-            // Eval time.
-            std::size_t eval_accu = 0;
-            start = steady_clock::now();
-            for (std::size_t i = 0; i != samples.size(); ++i) {
-                auto key = samples.at(i);
-                auto range = rmi.search(key);
-                eval_accu += range.pos + range.lo + range.hi;
-            }
-            stop = steady_clock::now();
-            auto eval_time = duration_cast<nanoseconds>(stop - start).count();
-            s_glob = eval_accu;
+        // Evaluate RMI error.
+        auto n_keys = keys.size();
+        std::vector<double> log2_errors;
+        log2_errors.reserve(n_keys);
 
-            // Lookup time.
-            std::size_t lookup_accu = 0;
-            start = steady_clock::now();
-            for (std::size_t i = 0; i != samples.size(); ++i) {
-                auto key = samples.at(i);
-                auto range = rmi.search(key);
-                auto pos = std::lower_bound(keys.begin() + range.lo, keys.begin() + range.hi, key);
-                lookup_accu += std::distance(keys.begin(), pos);
-            }
-            stop = steady_clock::now();
-            auto lookup_time = duration_cast<nanoseconds>(stop - start).count();
-            s_glob = lookup_accu;
+        for (std::size_t i = 0; i != n_keys; ++i) {
+            auto key = keys.at(i);
+            auto pred = test_rmi.search(key).pos;
+            auto err = pred > i ? pred - i : i - pred;
+            log2_errors.push_back(std::log2(err+1));
+        }
 
-            // Report results.
-                      // Dataset
-            std::cout << dataset_name << ','
-                      << keys.size() << ','
-                      // Index
-                      << "RMI-ours" << ','
-                      << "\"layer2_size=" << layer2_size << "\"" << ','
-                      << rmi.size_in_bytes() << ','
-                      // Experiment
-                      << rep << ','
-                      << samples.size() << ','
-                      // Results
-                      << build_time << ','
-                      << eval_time << ','
-                      << lookup_time << ','
-                      // Checksums
-                      << eval_accu << ','
-                      << lookup_accu << std::endl;
-        } // reps
-    } // k
+        auto mean_log2e = mean(log2_errors);
+
+#define RUN(RMI_TYPE, SEARCH_FN, N_MODELS) \
+        { \
+            auto search_fn = SEARCH_FN(); \
+            \
+            /* Perform n_reps runs. */ \
+            for (std::size_t rep = 0; rep != n_reps; ++rep) { \
+                \
+                /* Build time. */ \
+                auto start = steady_clock::now(); \
+                RMI_TYPE<key_type, layer1_type, layer2_type> rmi(keys, N_MODELS); \
+                auto stop = steady_clock::now(); \
+                auto build_time = duration_cast<nanoseconds>(stop - start).count(); \
+                \
+                /* Eval time. */ \
+                std::size_t eval_accu = 0; \
+                start = steady_clock::now(); \
+                for (std::size_t i = 0; i != samples.size(); ++i) { \
+                    auto key = samples.at(i); \
+                    auto range = rmi.search(key); \
+                    eval_accu += range.pos + range.lo + range.hi; \
+                } \
+                stop = steady_clock::now(); \
+                auto eval_time = duration_cast<nanoseconds>(stop - start).count(); \
+                s_glob = eval_accu; \
+                \
+                /* Lookup time. */ \
+                std::size_t lookup_accu = 0; \
+                start = steady_clock::now(); \
+                for (std::size_t i = 0; i != samples.size(); ++i) { \
+                    auto key = samples.at(i); \
+                    auto range = rmi.search(key); \
+                    auto pos = search_fn(keys.begin() + range.lo, keys.begin() + range.hi, keys.begin() + range.pos, key); \
+                    lookup_accu += std::distance(keys.begin(), pos); \
+                } \
+                stop = steady_clock::now(); \
+                auto lookup_time = duration_cast<nanoseconds>(stop - start).count(); \
+                s_glob = lookup_accu; \
+                \
+                /* Report results. */ \
+                          /* Dataset */ \
+                std::cout << dataset_name << ',' \
+                          << keys.size() << ',' \
+                          /* Index */ \
+                          << "RMI-ours" << ',' \
+                          << "\"" << #RMI_TYPE << ',' << "layer2_size=" << N_MODELS << "\"" << ',' \
+                          << rmi.size_in_bytes() << ',' \
+                          /* Experiment */ \
+                          << rep << ',' \
+                          << samples.size() << ',' \
+                          /* Results */ \
+                          << build_time << ',' \
+                          << eval_time << ',' \
+                          << lookup_time << ',' \
+                          /* Checksums */ \
+                          << eval_accu << ',' \
+                          << lookup_accu << std::endl; \
+            } /* reps */ \
+        }
+
+        // Perform experiment with configuration according to guideline.
+        auto threshold = 5.8; // This is hardware-dependent.
+        if (mean_log2e < threshold) {
+            RUN(rmi::Rmi, ModelBiasedExponentialSearch, n_models)
+        } else {
+            n_models = (budget - 2 * sizeof(double) - 2 * sizeof(std::size_t)) / (2 * sizeof(double) + sizeof(std::size_t));
+            RUN(rmi::RmiLAbs, BinarySearch, n_models)
+        }
+
+#undef RUN
+    }
+
 }
 
 
@@ -361,8 +397,8 @@ void benchmark_rs(const std::vector<key_type> &keys,
                   const std::string dataset_name)
 {
     // Set hyperparameters.
-    std::vector<std::size_t> radix_bits = { 16, 18, 20, 22, 24 };
-    std::vector<std::size_t> max_errors = { 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024, 2048, 4096 };
+    std::vector<std::size_t> radix_bits = { 16, 20, 22, 24, 26, 28 };
+    std::vector<std::size_t> max_errors = { 1, 2, 4, 8, 16, 32, 64, 128 };
 
     // Benchmark each configuration.
     for (auto num_radix_bits : radix_bits) {
@@ -447,13 +483,13 @@ void benchmark_cht(const std::vector<key_type> &keys,
 {
     // Set hyperparameters.
     std::vector<std::pair<std::size_t, std::size_t>> configs = {
-        {16, 512}, {16, 1024},
-        {32, 512},{32, 1024},
-        {64, 16}, {64, 32}, {64, 64}, {64, 128}, {64, 256}, {64, 512}, {64, 1024},
-        {128, 16}, {128, 32}, {128, 64}, {128, 128}, {128, 256}, {128, 512}, {128, 1024},
-        {256, 16}, {256, 32}, {256, 64}, {256, 128}, {256, 256}, {256, 512}, {256, 1024},
-        {512, 16}, {512, 32}, {512, 64}, {512, 128}, {512, 256}, {512, 512}, {512, 1024},
-        {1024, 16}, {1024, 32}, {1024, 64}, {1024, 128}, {1024, 256}, {1024, 512}, {1024, 1024},
+        {16, 512},
+        {32, 512},
+        {64, 16}, {64, 32}, {64, 64}, {64, 128}, {64, 256}, {64, 512},
+        {128, 16}, {128, 32}, {128, 64}, {128, 128}, {128, 256}, {128, 512},
+        {256, 16}, {256, 32}, {256, 64}, {256, 128}, {256, 256}, {256, 512},
+        {512, 16}, {512, 32}, {512, 64}, {512, 128}, {512, 256}, {512, 512},
+        {1024, 16}, {1024, 32}, {1024, 64}, {1024, 128}, {1024, 256}, {1024, 512},
     };
 
     // Benchmark each configuration.
@@ -466,7 +502,7 @@ void benchmark_cht(const std::vector<key_type> &keys,
 
             // Build time.
             auto start = steady_clock::now();
-            cht::Builder<key_type> chtb(keys.front(), keys.back(), num_bins, max_error);
+            cht::Builder<key_type> chtb(keys.front(), keys.back(), num_bins, max_error, false, false);
             for (const key_type &key : keys) chtb.AddKey(key);
             cht::CompactHistTree<key_type> cht = chtb.Finalize();
             auto stop = steady_clock::now();
