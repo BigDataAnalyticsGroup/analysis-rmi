@@ -23,8 +23,7 @@ def plot(x, y, xlabel, ylabel, filename, ylim_bottom=None, ylim_top=None, with_b
             if index == 'Binary search':
                 ax.axhline(y=data[y].iloc[0], label=index, color='.2', dashes=(2, 1)) if with_binary else True
             else:
-                marker = markers.get(index, '*')
-                ax.scatter(x=data[x], y=data[y], label=index, marker=marker, alpha=0.7)
+                ax.scatter(x=data[x], y=data[y], label=index, alpha=0.9)
 
         # Axes labels
         ax.set_title(dataset)
@@ -97,17 +96,6 @@ if __name__ == "__main__":
 
     datasets = sorted(df['dataset'].unique())
     indexes = sorted(df['index'].unique())
-
-    markers = {
-        'ALEX': '^',
-        'ART': 'X',
-        'B-tree': 'p',
-        'Compact Hist-Tree': 'x',
-        'PGM-index': 's',
-        'RadixSpline': '+',
-        'RMI-ours': 'o',
-        'RMI-ref': 'o',
-    }
 
     # Plot lookup times against index size
     filename = 'index_comparison-lookup_time.pdf'
