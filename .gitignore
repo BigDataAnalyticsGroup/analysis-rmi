@@ -34,8 +34,10 @@
 # Reference optimizer remnants
 *.json_results
 
+# Plots
+*.pdf
+
 # Directories
 build/
 data/
 doxy/
-results/
