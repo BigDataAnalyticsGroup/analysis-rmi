@@ -397,8 +397,8 @@ void benchmark_rs(const std::vector<key_type> &keys,
                   const std::string dataset_name)
 {
     // Set hyperparameters.
-    std::vector<std::size_t> radix_bits = { 16, 20, 22, 24, 26, 28 };
-    std::vector<std::size_t> max_errors = { 1, 2, 4, 8, 16, 32, 64, 128 };
+    std::vector<std::size_t> radix_bits = { 8, 10, 12, 14, 16, 20, 22, 24, 26, 28 };
+    std::vector<std::size_t> max_errors = { 1, 2, 4, 8, 16, 32, 64, 128, 256 };
 
     // Benchmark each configuration.
     for (auto num_radix_bits : radix_bits) {
