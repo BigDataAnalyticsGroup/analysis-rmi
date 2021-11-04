@@ -55,12 +55,15 @@ if __name__ == "__main__":
 
     #  Plot mean interval size
     filename = 'rmi_intervals-mean_interval.pdf'
+    print(f'Plotting mean interval to \'{filename}\'...')
     plot('size_in_MiB', 'mean_interval', 'Index size [MiB]', 'Mean error\ninterval size', filename)
 
     #  Plot median interval size
     filename = 'rmi_intervals-median_interval.pdf'
+    print(f'Plotting median interval to \'{filename}\'...')
     plot('size_in_MiB', 'median_interval', 'Index size [MiB]', 'Median error\ninterval size', filename)
 
     #  Plot max interval size
     filename = 'rmi_intervals-max_interval.pdf'
+    print(f'Plotting max interval to \'{filename}\'...')
     plot('size_in_MiB', 'max_interval', 'Index size [MiB]', 'Max error\ninterval size', filename)

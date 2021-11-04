@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings( "ignore")
 
 
-def plot_frac_empty():
+def plot_frac_empty(filename='rmi_segmentation-frac_empty.pdf'):
     n_cols = len(datasets)
     n_rows = 1
 
@@ -38,10 +38,10 @@ def plot_frac_empty():
         ax.grid()
         ax.legend(ncol=1)
 
-    fig.savefig(os.path.join(path, 'rmi_segmentation-frac_empty.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
 
-def plot_max_segment():
+def plot_max_segment(filename='rmi_segmentation-max_segment.pdf'):
     n_cols = len(datasets)
     n_rows = 1
 
@@ -70,7 +70,7 @@ def plot_max_segment():
         ax.grid()
         ax.legend(ncol=1)
 
-    fig.savefig(os.path.join(path, 'rmi_segmentation-max_segment.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
 if __name__ == "__main__":
     path = 'results'
@@ -86,10 +86,14 @@ if __name__ == "__main__":
     models = sorted(df['model'].unique())
     n_segments = sorted(df['n_segments'].unique())
 
-    # Plot frac_empty
-    plot_frac_empty()
+    # Plot empty segments
+    filename = 'rmi_segmentation-frac_empty.pdf'
+    print(f'Plotting empty segments to \'{filename}\'...')
+    plot_frac_empty(filename)
 
-    # Plot medians
-    plot_max_segment()
+    # Plot max segment
+    filename = 'rmi_segmentation-max_segment.pdf'
+    print(f'Plotting max segments to \'{filename}\'...')
+    plot_max_segment(filename)
 
 

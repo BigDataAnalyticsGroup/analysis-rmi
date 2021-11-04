@@ -9,7 +9,7 @@ import warnings
 warnings.filterwarnings( "ignore")
 
 
-def plot_guideline():
+def plot_guideline(filename='rmi_guideline.pdf'):
     n_cols = len(datasets)
     n_rows = 1
 
@@ -66,7 +66,7 @@ def plot_guideline():
         ax.grid()
         ax.legend(ncol=1)
 
-    fig.savefig(os.path.join(path, 'rmi_guideline.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
 
 if __name__ == "__main__":
@@ -87,4 +87,6 @@ if __name__ == "__main__":
     budgets = sorted(df['budget_in_bytes'].unique())
 
     # Plot guideline
-    plot_guideline()
+    filename = 'rmi_guideline.pdf'
+    print(f'Plotting guideline to \'{filename}\'...')
+    plot_guideline(filename)

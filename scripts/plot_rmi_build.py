@@ -9,56 +9,17 @@ import warnings
 warnings.filterwarnings( "ignore")
 
 
-def plot_no_bounds():
-    n_cols = len(datasets)
-    n_rows = len(l2models)
-
-    bound = 'none'
-
-    fig, axs = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4.2*n_rows), sharey=True, sharex=True)
-    fig.tight_layout()
-
-    for row, l2 in enumerate(l2models):
-        for col, dataset in enumerate(datasets):
-            ax = axs[row,col]
-            for l1 in l1models:
-                data = df[
-                        (df['dataset']==dataset) &
-                        (df['rmi']=="ours") &
-                        (df['layer1']==l1) &
-                        (df['layer2']==l2) &
-                        (df['bounds']==bound)
-                ]
-                if not data.empty:
-                    ax.plot(data['size_in_MiB'], data['build_in_s'], marker='o', alpha=0.7, label=f'{l1}$\mapsto${l2}')
-
-            # Axes labels
-            ax.set_title(f'{dataset} (NB)')
-            if col==0:
-                ax.set_ylabel('Build time [s]')
-            if row==n_rows - 1:
-                ax.set_xlabel('Index size [MiB]')
-
-            # Visuals
-            ax.set_ylim(bottom=0)
-            ax.set_xscale('log')
-            ax.grid()
-            ax.legend(ncol=1)
-
-    fig.savefig(os.path.join(path, 'rmi_build-no_bounds.pdf'), bbox_inches='tight')
-
-
-def plot_bounds():
-    n_cols = len(datasets)
-    n_rows = len(l1models) * len(l2models)
+def plot_ours(filename='rmi_build-ours.pdf'):
+    n_rows = len(datasets)
+    n_cols = len(l1models) * len(l2models)
 
     configs = itertools.product(l1models, l2models)
 
     fig, axs = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4.2*n_rows), sharey=True, sharex=True)
     fig.tight_layout()
 
-    for row, (l1, l2) in enumerate(configs):
-        for col, dataset in enumerate(datasets):
+    for col, (l1, l2) in enumerate(configs):
+        for row, dataset in enumerate(datasets):
             ax = axs[row,col]
             for bound in bounds:
                 data = df[
@@ -68,7 +29,7 @@ def plot_bounds():
                         (df['layer2']==l2) &
                         (df['bounds']==bound)
                 ]
-                if not (data.empty or bound=='none') :
+                if not (data.empty) :
                     ax.plot(data['size_in_MiB'], data['build_in_s'], marker='o', alpha=0.7, label=bound)
 
             # Axes labels
@@ -84,12 +45,12 @@ def plot_bounds():
             ax.grid()
             ax.legend(ncol=1)
 
-    fig.savefig(os.path.join(path, 'rmi_build-bounds.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
 
-def plot_reference():
-    n_cols = len(datasets)
-    n_rows = len(l1models) * len(l2models)
+def plot_reference(filename='rmi_build-ref.pdf'):
+    n_rows = len(datasets)
+    n_cols = len(l1models) * len(l2models)
 
     bounds = ['none','labs']
     configs = itertools.product(l1models, l2models)
@@ -97,8 +58,8 @@ def plot_reference():
     fig, axs = plt.subplots(n_rows, n_cols, figsize=(5*n_cols, 4.2*n_rows), sharey=True, sharex=True)
     fig.tight_layout()
 
-    for row, (l1, l2) in enumerate(configs):
-        for col, dataset in enumerate(datasets):
+    for col, (l1, l2) in enumerate(configs):
+        for row, dataset in enumerate(datasets):
             ax = axs[row,col]
             for rmi in rmis:
                 for bound in bounds:
@@ -125,7 +86,7 @@ def plot_reference():
             ax.grid()
             ax.legend(ncol=1)
 
-    fig.savefig(os.path.join(path, 'rmi_build-reference.pdf'), bbox_inches='tight')
+    fig.savefig(os.path.join(path, filename), bbox_inches='tight')
 
 
 if __name__ == "__main__":
@@ -148,11 +109,12 @@ if __name__ == "__main__":
     l1models = sorted(df['layer1'].unique())
     l2models = sorted(df['layer2'].unique())
 
-    # Plot no bounds
-    plot_no_bounds()
+    # Plot ours
+    filename = 'rmi_build-ours.pdf'
+    print(f'Plotting build times to \'{filename}\'...')
+    plot_ours(filename)
 
-    # Plot bounds
-    plot_bounds()
-
-    # Plot reference impl
-    plot_reference()
+    # Plot reference
+    filename = 'rmi_build-ref.pdf'
+    print(f'Plotting build time comparison to reference implementation to \'{filename}\'...')
+    plot_reference(filename)
