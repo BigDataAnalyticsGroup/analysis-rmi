@@ -19,3 +19,4 @@
 [submodule "third_party/RMI"]
 	path = third_party/RMI
 	url = https://github.com/learnedsystems/RMI
+	ignore = dirty
