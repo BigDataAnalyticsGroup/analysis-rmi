@@ -35,7 +35,7 @@ DATASETS="books_200M_uint64 fb_200M_uint64 osm_cellids_200M_uint64 wiki_ts_200M_
 MODELS="linear_spline cubic_spline linear_regression radix"
 
 # Run experiments
-echo "dataset,model,n_segments,mean,stdev,median,min,max,n_empty" > ${FILE_RESULTS} # Write csv header
+echo "dataset,n_keys,model,n_segments,mean,stdev,median,min,max,n_empty" > ${FILE_RESULTS} # Write csv header
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."

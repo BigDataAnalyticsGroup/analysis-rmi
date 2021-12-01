@@ -37,7 +37,7 @@ LAYER1_MODELS="linear_spline cubic_spline linear_regression radix"
 LAYER2_MODELS="linear_spline linear_regression"
 
 # Run experiments
-echo "dataset,layer1,layer2,n_models,mean_ae,median_ae,stdev_ae,min_ae,max_ae" > ${FILE_RESULTS} # Write csv header
+echo "dataset,n_keys,layer1,layer2,n_models,mean_ae,median_ae,stdev_ae,min_ae,max_ae" > ${FILE_RESULTS} # Write csv header
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."

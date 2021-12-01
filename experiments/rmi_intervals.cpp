@@ -51,6 +51,7 @@ void experiment(const std::vector<key_type> &keys,
     // Report results.
                  // Dataset
     std::cout << dataset_name << ','
+              << n_keys << ','
                  // RMI config
               << layer1 << ','
               << layer2 << ','

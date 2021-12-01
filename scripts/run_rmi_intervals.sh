@@ -39,7 +39,7 @@ LAYERS2="linear_spline linear_regression"
 BOUNDS="gabs gind labs lind"
 
 # Run experiments
-echo "dataset,layer1,layer2,n_models,bounds,size_in_bytes,mean_interval,median_interval,stdev_interval,min_interval,max_interval" > ${FILE_RESULTS} # Write csv header
+echo "dataset,n_keys,layer1,layer2,n_models,bounds,size_in_bytes,mean_interval,median_interval,stdev_interval,min_interval,max_interval" > ${FILE_RESULTS} # Write csv header
 for dataset in ${DATASETS};
 do
     echo "Performing ${EXPERIMENT} on '${dataset}'..."

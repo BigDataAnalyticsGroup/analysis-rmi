@@ -43,6 +43,7 @@ void experiment(const std::vector<key_type> &keys,
     // Report results.
                  // Dataset
     std::cout << dataset_name << ','
+              << keys.size() << ','
                  // Model config
               << model << ','
               << n_segments << ','
