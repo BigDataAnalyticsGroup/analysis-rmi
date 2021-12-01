@@ -98,6 +98,11 @@ int main(int argc, char *argv[])
         .help("number of segments, power of two is recommended.")
         .action([](const std::string &s) { return std::stoul(s); });
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     // Parse arguments.
     try {
         program.parse_args(argc, argv);
@@ -122,6 +127,20 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     exp_fn_ptr exp_fn = exp_map[model];
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "model,"
+                  << "n_segments,"
+                  << "mean,"
+                  << "stdev,"
+                  << "median,"
+                  << "min,"
+                  << "max,"
+                  << "n_empty"
+                  << std::endl;
 
     // Run experiment.
     (*exp_fn)(keys, n_segments, dataset_name, model);

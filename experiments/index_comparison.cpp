@@ -970,6 +970,11 @@ int main(int argc, char *argv[])
         .default_value(std::size_t(1'000'000))
         .action([](const std::string &s) { return std::stoul(s); });
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     program.add_argument("--rmi")
         .help("run benchmark on Recursive Model Index")
         .default_value(false)
@@ -1041,6 +1046,22 @@ int main(int argc, char *argv[])
     samples.reserve(n_samples);
     for (std::size_t i = 0; i != n_samples; ++i)
         samples.push_back(keys[distrib(gen)]);
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "index,"
+                  << "config,"
+                  << "size_in_bytes,"
+                  << "rep,"
+                  << "n_samples,"
+                  << "build_time,"
+                  << "eval_time,"
+                  << "lookup_time,"
+                  << "eval_accu,"
+                  << "lookup_accu"
+                  << std::endl;
 
     // Run benchmarks.
     if (program["--rmi"]  == true) benchmark_rmi(keys, samples, n_reps, dataset_name);

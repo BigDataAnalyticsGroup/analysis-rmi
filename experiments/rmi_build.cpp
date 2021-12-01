@@ -153,6 +153,11 @@ int main(int argc, char *argv[])
         .default_value(std::size_t(3))
         .action([](const std::string &s) { return std::stoul(s); });
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     // Parse arguments.
     try {
         program.parse_args(argc, argv);
@@ -181,6 +186,21 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     exp_fn_ptr exp_fn = exp_map[config];
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "rmi,"
+                  << "layer1,"
+                  << "layer2,"
+                  << "n_models,"
+                  << "bounds,"
+                  << "size_in_bytes,"
+                  << "rep,"
+                  << "build_time,"
+                  << "checksum"
+                  << std::endl;
 
     // Run experiment.
     (*exp_fn)(keys, n_models, n_reps, dataset_name, layer1, layer2, bound_type);

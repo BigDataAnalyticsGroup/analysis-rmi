@@ -145,6 +145,11 @@ int main(int argc, char *argv[])
     program.add_argument("bound_type")
         .help("type of error bounds used, either labs, lind, gabs, or gind.");
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     // Parse arguments.
     try {
         program.parse_args(argc, argv);
@@ -172,6 +177,22 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     exp_fn_ptr exp_fn = exp_map[config];
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "layer1,"
+                  << "layer2,"
+                  << "n_models,"
+                  << "bounds,"
+                  << "size_in_bytes,"
+                  << "mean_interval,"
+                  << "median_interval,"
+                  << "stdev_interval,"
+                  << "min_interval,"
+                  << "max_interval"
+                  << std::endl;
 
     // Run experiment.
     (*exp_fn)(keys, n_models, dataset_name, layer1, layer2, bound_type);

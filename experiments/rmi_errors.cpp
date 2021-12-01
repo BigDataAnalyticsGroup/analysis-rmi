@@ -116,6 +116,11 @@ int main(int argc, char *argv[])
         .help("number of models on layer2, power of two is recommended.")
         .action([](const std::string &s) { return std::stoul(s); });
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     // Parse arguments.
     try {
         program.parse_args(argc, argv);
@@ -142,6 +147,20 @@ int main(int argc, char *argv[])
         exit(EXIT_FAILURE);
     }
     exp_fn_ptr exp_fn = exp_map[config];
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "layer1,"
+                  << "layer2,"
+                  << "n_models,"
+                  << "mean_ae,"
+                  << "median_ae,"
+                  << "stdev_ae"
+                  << "min_ae"
+                  << "max_ae"
+                  << std::endl;
 
     // Run experiment.
     (*exp_fn)(keys, n_models, dataset_name, layer1, layer2);

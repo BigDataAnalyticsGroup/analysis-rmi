@@ -284,6 +284,11 @@ int main(int argc, char *argv[])
         .default_value(std::size_t(1'000'000))
         .action([](const std::string &s) { return std::stoul(s); });
 
+    program.add_argument("--header")
+        .help("output csv header")
+        .default_value(false)
+        .implicit_value(true);
+
     // Parse arguments.
     try {
         program.parse_args(argc, argv);
@@ -334,6 +339,24 @@ int main(int argc, char *argv[])
         { "labs", sizeof(std::size_t) },
         { "lind", 2 * sizeof(std::size_t) },
     };
+
+    // Output header.
+    if (program["--header"]  == true)
+        std::cout << "dataset,"
+                  << "n_keys,"
+                  << "layer1,"
+                  << "layer2,"
+                  << "n_models,"
+                  << "bounds,"
+                  << "search,"
+                  << "size_in_bytes,"
+                  << "rep,"
+                  << "n_samples,"
+                  << "budget_in_bytes,"
+                  << "is_guideline,"
+                  << "lookup_time,"
+                  << "lookup_accu"
+                  << std::endl;
 
     // Enumerate and evaluate configurations.
     for (auto l1 : l1_models) {
