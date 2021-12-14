@@ -376,6 +376,7 @@ void benchmark_pgm(const std::vector<key_type> &keys,
     PGM(2, 16)
     PGM(1, 16)
 
+#undef PGM
 }
 
 
