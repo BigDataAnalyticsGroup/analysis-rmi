@@ -43,7 +43,6 @@ std::cout << "Key " << key << " is located at position "
 ```
 
 ## Experimental Results
-
 We provide the following experiments from our paper.
 * `rmi_segmentation`: Statistical properties on the segment sizes resulting
   from various root models (Section 5.1).
@@ -65,7 +64,7 @@ Below, we explain step by step how to reproduce our experimental results.
 The following tools are required to reproduce our results.
 * C++ compiler supporting C++17.
 * `bash>=4`: run shell scripts.
-* `cmake`: build configuration.
+* `cmake>=3.2`: build configuration.
 * `md5sum`: validate the datasets.
 * `rust`: generate reference RMIs from [learnedsystems/RMI](https://github.com/learnedsystems/RMI).
 * `timeout`: abort experiments of slow configurations.
@@ -109,7 +108,6 @@ scripts/plot_index_comparison.py
 The plots will be prefixed by the experiment name and placed in `results/`.
 
 ## Documentation
-
 Code documentation can be generated using `doxygen` by running the following command.
 ```sh
 doxygen Doxyfile
