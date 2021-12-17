@@ -226,7 +226,6 @@ void evaluate_guideline(const std::vector<key_type> &keys,
     }
 
     auto mean_log2e = mean(log2_errors);
-    auto median_log2e = median(log2_errors);
 
     // Pick and evaluate guideline config based on errors.
     auto l1 = "linear_spline";
