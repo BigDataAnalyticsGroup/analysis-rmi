@@ -122,3 +122,4 @@ do
         done
     done
 done
+cd $CWD
