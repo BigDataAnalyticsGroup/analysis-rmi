@@ -1,5 +1,5 @@
 # A Critical Analysis of Recursive Model Indexes
-Code used for the [arXiv report](https://arxiv.org/abs/2106.16166).
+Code for our VLDB paper and [arXiv report](https://arxiv.org/abs/2106.16166).
 
 ## Build
 First clone the repository including all submodules.
@@ -134,8 +134,22 @@ doxygen Doxyfile
 The code documentation will be placed in `doxy/html/`.
 
 ## Cite
+VLDB paper:
 ```
-@misc{maltry2021critical,
+@article{maltry2022critical,
+    title={A Critical Analysis of Recursive Model Indexes},
+    author={Marcel Maltry and Jens Dittrich}
+    journal={Proc. {VLDB} Endow.},
+    volume={15},
+    number={tba},
+    pages={tba},
+    year={2022}
+}
+```
+
+arXiv report:
+```
+@misc{maltry2021criticalarxiv,
     title={A Critical Analysis of Recursive Model Indexes},
     author={Marcel Maltry and Jens Dittrich},
     year={2021},
