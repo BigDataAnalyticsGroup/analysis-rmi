@@ -1,5 +1,6 @@
 # A Critical Analysis of Recursive Model Indexes
-Code for our VLDB paper and [arXiv report](https://arxiv.org/abs/2106.16166).
+Code for our [VLDB paper](https://www.vldb.org/pvldb/vol15/p1079-maltry.pdf)
+and [arXiv report](https://arxiv.org/abs/2106.16166).
 
 ## Build
 First clone the repository including all submodules.
@@ -141,8 +142,8 @@ VLDB paper:
     author={Marcel Maltry and Jens Dittrich}
     journal={Proc. {VLDB} Endow.},
     volume={15},
-    number={tba},
-    pages={tba},
+    number={5},
+    pages={1079--1091},
     year={2022}
 }
 ```
