@@ -18,7 +18,7 @@ struct LinearSearch {
      * @return iterator to the first element that is not less than @p value
      */
     template<typename InputIt, typename T>
-    InputIt operator()(InputIt first, InputIt last, InputIt pred, const T &value) {
+    InputIt operator()(InputIt first, InputIt last, InputIt /* pred */, const T &value) {
         InputIt runner = first;
         for (; runner != last; ++runner)
             if (*runner >= value) return runner;
@@ -71,7 +71,7 @@ struct BinarySearch {
      * @return iterator to the first element that is not less than @p value
      */
     template<typename InputIt, typename T>
-    InputIt operator()(InputIt first, InputIt last, InputIt pred, const T &value) {
+    InputIt operator()(InputIt first, InputIt last, InputIt /* pred */, const T &value) {
         return std::lower_bound(first, last, value);
     }
 };
@@ -114,7 +114,7 @@ struct ExponentialSearch {
      * @return iterator to the first element that is not less than @p value
      */
     template<typename InputIt, typename T>
-    InputIt operator()(InputIt first, InputIt last, InputIt pred, const T &value) {
+    InputIt operator()(InputIt first, InputIt last, InputIt /* pred */, const T &value) {
         if (*first >= value) return first;
         std::size_t bound = 1;
         InputIt prev = first;
