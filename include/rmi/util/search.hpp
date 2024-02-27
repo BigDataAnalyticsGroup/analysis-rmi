@@ -101,7 +101,6 @@ struct ModelBiasedBinarySearch {
 
 /**
  * Functor for performing exponential search.
- * TODO: might need fix for datasets containing duplicates.
  */
 struct ExponentialSearch {
     /**
@@ -132,7 +131,6 @@ struct ExponentialSearch {
 
 /**
  * Functor for performing model-biased exponential search.
- * TODO: might need fix for datasets containing duplicates.
  */
 struct ModelBiasedExponentialSearch {
     /**
@@ -161,7 +159,7 @@ struct ModelBiasedExponentialSearch {
             std::size_t bound = 1;
             InputIt prev = pred;
             InputIt curr = prev - bound;
-            while (curr > first and *curr > value) {
+            while (curr > first and *curr >= value) {
                 bound *= 2;
                 prev = curr;
                 curr -= bound;
